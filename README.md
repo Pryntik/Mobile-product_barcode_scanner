@@ -1,9 +1,9 @@
 # Barcode Scanner
 
-|   Nom   | Prénom |
-|---------|--------|
-|   Doe   |  Jane  |
-|   Doe   |  John  |
+|   Nom         |  Prénom     |
+|---------------|-------------|
+|   Alexandre   |  Lemetteil  |
+|   Marvin      |  Clapson    |
 
 Le TP est à réaliser par groupe de 2.
 

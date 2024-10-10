@@ -1,10 +1,12 @@
 import React from "react";
 import { SafeAreaView, Text } from "react-native";
 
-export default function HistoriqueAchat() {
+const HistoriqueAchat = () => {
     return (
         <SafeAreaView>
-            <Text>Page Accueil</Text>
+            <Text>Page Historique</Text>
         </SafeAreaView>
     );
 }
+
+export default HistoriqueAchat;

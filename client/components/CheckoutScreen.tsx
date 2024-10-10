@@ -1,9 +1,9 @@
-import { useStripe } from "@stripe/stripe-react-native";
 import Constants from "expo-constants";
 import React, { useEffect, useState } from "react";
+import { useStripe } from "@stripe/stripe-react-native";
 import { Alert, Text, Button, SafeAreaView } from "react-native";
 
-export default function CheckoutScreen() {
+const CheckoutScreen = () => {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
     const [paymentIntentId, setPaymentIntentId] = useState<string>("");
@@ -96,3 +96,5 @@ export default function CheckoutScreen() {
         </SafeAreaView>
     );
 }
+
+export default CheckoutScreen;
