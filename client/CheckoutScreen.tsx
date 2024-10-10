@@ -8,9 +8,9 @@ export default function CheckoutScreen() {
     const [loading, setLoading] = useState(false);
     const [paymentIntentId, setPaymentIntentId] = useState<string>("");
 
-    const apiUrl = Constants.expoConfig.extra.apiUrl;
+    const apiUrl = Constants?.expoConfig?.extra?.apiUrl;
 
-    const userId = "cus_QwzBuC11JSfBoD";
+    const userId = "cus_R0LkRSXoyIRK7z";
     const items = [
         {
             "id": 1,
