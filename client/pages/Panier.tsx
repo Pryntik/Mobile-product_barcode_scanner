@@ -9,7 +9,6 @@ const Panier = () => {
 
     return (
         <SafeAreaView>
-            <Text>Page Panier</Text>
             <StripeProvider publishableKey={stripePK} merchantIdentifier="merchant.com.example">
                 <CheckoutScreen />
             </StripeProvider>

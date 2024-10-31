@@ -29,8 +29,7 @@ const Acceuil = () => {
     
     return (
         <View style={cameraStyle.container}>
-            <Text>Page Accueil</Text>
-            <Button title="Click" onPress={() => navigation.navigate('HistoriqueAchat')}></Button>
+            <Button title="Panier" onPress={() => navigation.navigate('Panier')}></Button>
             <CameraView style={cameraStyle.camera} facing={facing}>
             <View style={cameraStyle.buttonContainer}>
                 <TouchableOpacity style={cameraStyle.button} onPress={toggleCameraFacing}>
