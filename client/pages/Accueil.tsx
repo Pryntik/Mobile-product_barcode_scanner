@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { Button, Text, TouchableOpacity, View, Image } from 'react-native';
 import { cameraStyle } from "../styles/Camera";
+import { useNavigation } from '@react-navigation/native';
+import { RouteType } from "../types/TLink";
 
 const Acceuil = () => {
+    const navigation = useNavigation<RouteType>();
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
 
@@ -27,6 +30,7 @@ const Acceuil = () => {
     return (
         <View style={cameraStyle.container}>
             <Text>Page Accueil</Text>
+            <Button title="Click" onPress={() => navigation.navigate('HistoriqueAchat')}></Button>
             <CameraView style={cameraStyle.camera} facing={facing}>
             <View style={cameraStyle.buttonContainer}>
                 <TouchableOpacity style={cameraStyle.button} onPress={toggleCameraFacing}>

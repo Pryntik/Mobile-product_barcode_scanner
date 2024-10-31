@@ -11,9 +11,9 @@ const App = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='Accueil'>
-        <Tab.Screen name="Accueil" component={Accueil} />
-        <Tab.Screen name="Panier" component={Panier} />
-        <Tab.Screen name="HistoriqueAchat" component={HistoriqueAchat} />
+        <Tab.Screen name="Accueil" component={Accueil}/>
+        <Tab.Screen name="Panier" component={Panier}/>
+        <Tab.Screen name="HistoriqueAchat" component={HistoriqueAchat}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
