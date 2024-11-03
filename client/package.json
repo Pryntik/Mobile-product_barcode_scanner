@@ -9,23 +9,34 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~3.2.3",
+    "@expo/ngrok": "^4.1.0",
+    "@react-native-community/cli-server-api": "^15.0.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/stack": "^6.4.1",
-    "@stripe/stripe-react-native": "^0.38.6",
-    "expo": "~51.0.28",
+    "@stripe/stripe-react-native": "^0.37.2",
+    "client": "file:",
+    "expo": "^51.0.38",
     "expo-camera": "^15.0.16",
     "expo-constants": "~16.0.2",
     "expo-sqlite": "~14.0.6",
     "expo-status-bar": "~1.12.1",
-    "react": "18.2.0",
-    "react-native": "0.74.5",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "^0.74.5",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-web": "~0.19.10",
     "react-navigation": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@types/react": "~18.2.45",
-    "typescript": "^5.1.3"
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-syntax-flow": "^7.26.0",
+    "@babel/plugin-transform-flow-strip-types": "^7.25.9",
+    "@babel/plugin-transform-private-methods": "^7.25.9",
+    "@types/react": "~18.2.79",
+    "typescript": "~5.3.3"
   },
   "private": true
 }

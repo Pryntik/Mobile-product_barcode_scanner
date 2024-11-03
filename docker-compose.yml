@@ -1,0 +1,25 @@
+services:
+  barcode-scanner-server:
+    build:
+      context: ./server
+      dockerfile: ../docker/server.Dockerfile
+    volumes:
+      - ./server:/app
+    env_file:
+      - ./server/.env
+    ports:
+      - "8000:8000"
+
+  barcode-scanner-client:
+    build:
+      context: ./client
+      dockerfile: ../docker/client.Dockerfile
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - 19000:19000
+      - 19001:19001
+      - 19002:19002
+    environment:
+         - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0

@@ -1,7 +1,6 @@
-
 FROM python:3.10.7-slim-buster
 
-WORKDIR /build
+WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -20,4 +19,6 @@ RUN poetry install --only main
 
 COPY . .
 
-CMD uvicorn src.main:app --proxy-headers --host 0.0.0.0 --reload --port $FASTAPI_PORT
+EXPOSE 8000
+
+CMD ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0", "--reload", "--port", "8000"]
