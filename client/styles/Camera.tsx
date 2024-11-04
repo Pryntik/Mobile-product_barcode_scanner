@@ -16,12 +16,19 @@ export const cameraStyle = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        margin: 64,
+        width: 70,
+        marginRight: 15,
+        marginBottom: 15,
     },
     button: {
         flex: 1,
         alignSelf: 'flex-end',
         alignItems: 'center',
+        height: 50,
+    },
+    image: {
+        width: 50,
+        height: 50,
     },
     text: {
         fontSize: 24,
