@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import { SafeAreaView, Text } from "react-native";
 import CheckoutScreen from "../components/CheckoutScreen";
 
-const Panier = () => {
+const Basket = () => {
   const stripePK = Constants?.expoConfig?.extra?.stripePK;
 
     return (
@@ -16,4 +16,4 @@ const Panier = () => {
     );
 }
 
-export default Panier;
+export default Basket;

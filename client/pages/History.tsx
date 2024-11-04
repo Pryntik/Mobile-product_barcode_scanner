@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView, Text } from "react-native";
 
-const HistoriqueAchat = () => {
+const History = () => {
     return (
         <SafeAreaView>
             <Text>Page Historique</Text>
@@ -9,4 +9,4 @@ const HistoriqueAchat = () => {
     );
 }
 
-export default HistoriqueAchat;
+export default History;
