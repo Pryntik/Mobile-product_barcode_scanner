@@ -16,7 +16,7 @@ const CameraLayout = ({getScanResult}: CameraLayoutType) => {
         setFacing(current => (current === 'back' ? 'front' : 'back'));
     }
 
-    const CameraViewMode = () => {
+    const cameraViewMode = () => {
         if (permission && permission.granted === false) {
             return (
                 <>
@@ -38,7 +38,7 @@ const CameraLayout = ({getScanResult}: CameraLayoutType) => {
 
     return (
         <View style={cameraStyle.container}>
-            {CameraViewMode()}
+            {cameraViewMode()}
         </View>
     );
 }

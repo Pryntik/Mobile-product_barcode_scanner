@@ -2,8 +2,9 @@ import CameraLayout from "../components/CameraLayout";
 import Popup from "../components/Popup";
 import React, { useEffect, useState } from "react";
 import { BarcodeScanningResult } from "expo-camera";
-import { ToastAndroid, View } from "react-native";
+import { View } from "react-native";
 import { homeStyle } from "../styles/Home.style";
+import { lockAsync, OrientationLock } from "expo-screen-orientation";
 
 const Home = () => {
     const [popupIsVisible, setPopupIsVisible] = useState(false);
@@ -13,6 +14,13 @@ const Home = () => {
         setPopupIsVisible(false);
         setScanResult(undefined);
     }
+
+    useEffect(() => {
+        const lockOrientation = async () => {
+          await lockAsync(OrientationLock.PORTRAIT_UP);
+        };
+        lockOrientation();
+      }, []);
 
     useEffect(() => {
         if (scanResult) {
