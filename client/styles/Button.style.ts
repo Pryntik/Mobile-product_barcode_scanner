@@ -11,7 +11,7 @@ export const buttonStyle = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderColor: 'black',
-        borderWidth: 3,
+        borderWidth: 2,
         borderRadius: 10,
     },
     imageButton_text: {

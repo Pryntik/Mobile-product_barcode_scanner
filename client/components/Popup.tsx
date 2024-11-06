@@ -1,15 +1,15 @@
-import crossIcon from "../assets/cross.png";
-import checkIcon from "../assets/check.png";
+import crossIcon from "../assets/img/cross.png";
+import checkIcon from "../assets/img/check.png";
 import ImageButton from "./ImageButton";
+import CardProduct from "./CardProduct";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, Animated, View } from "react-native"
+import { Animated } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProductFromItem } from "../utils/item.util";
+import { getProduct, getProductCard } from "../utils/item.util";
 import { ProductType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
-import CardProduct from "./CardProduct";
 
 type PopupType = {
     isVisible?: boolean,
@@ -27,7 +27,7 @@ const Popup = ({
     const navigation = useNavigation<RouteType>();
     const ySize = 300;
     const dataItem = data?.scanItem;
-    const [product, setProduct] = useState<ProductType | null>(getProductFromItem(dataItem?.data));
+    const [product, setProduct] = useState<ProductType | null>(getProduct(dataItem?.data));
     const [isShow, setIsShow] = useState(isVisible);
     const slideAnim = useRef(new Animated.Value(ySize)).current;
 
@@ -47,7 +47,7 @@ const Popup = ({
     };
 
     useEffect(() => {
-        setProduct(getProductFromItem(dataItem?.data));
+        setProduct(getProduct(dataItem?.data));
     }, [dataItem]);
 
     useEffect(() => {
@@ -73,7 +73,7 @@ const Popup = ({
                     styleImage={popupStyle.buttonClose_image}
                     alt="Close"
                     src={crossIcon}/>
-                <CardProduct mayProduct={product}/>
+                <CardProduct product={getProductCard(product)}/>
                 <ImageButton
                     onClick={addProduct}
                     text="Add product"

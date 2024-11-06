@@ -1,8 +1,8 @@
-import reverseCameraIcon from '../assets/reverse_camera.png';
-import React, { useEffect, useState } from "react";
+import reverseCameraIcon from '../assets/img/reverse_camera.png';
+import React, { useState } from "react";
 import { cameraStyle } from "../styles/Camera.style";
 import { BarcodeScanningResult, CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { Button, Text, TouchableOpacity, View, Image, ToastAndroid } from 'react-native';
+import { Button, Text, TouchableOpacity, View, Image } from 'react-native';
 
 type CameraLayoutType = {
     getScanResult(scanResult: BarcodeScanningResult): void,

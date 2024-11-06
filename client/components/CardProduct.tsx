@@ -1,33 +1,22 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native";
-import { popupStyle } from "../styles/Popup.style";
-import { MaybeProductType, ProductType } from "../types/TItem";
-import { isProduct } from "../utils/item.util";
+import React from "react";
+import { View, Text, Image } from "react-native";
+import { MaybeProductType, ProductCardType } from "../types/TItem";
+import { getProductCard, getStatusIcon } from "../utils/item.util";
+import { cardStyle } from "../styles/Card.style";
 
 type CardProductType = {
-    mayProduct: MaybeProductType;
+    product: ProductCardType;
 }
 
-const CardProduct = ({mayProduct}: CardProductType) => {
-    const [name, setName] = useState('Product unknown');
-    const [price, setPrice] = useState('?€');
-    const [itemIsProduct, setItemIsProduct] = useState('false');
-
-    React.useEffect(() => {
-        if (isProduct(mayProduct)) {
-            const product = mayProduct as ProductType;
-            setName(product.name);
-            setPrice(product.price.toFixed(2) + '€');
-            setItemIsProduct('true');
-        }
-    }, [mayProduct]);
+const CardProduct = ({product}: CardProductType) => {
 
     return (
-        <View style={popupStyle.dataContainer}>
-            <View style={popupStyle.dataCard}>
-                <Text style={popupStyle.title}>{name}</Text>
-                <Text style={popupStyle.content}>{price}</Text>
-                <Text style={popupStyle.content}>{itemIsProduct}</Text>
+        <View style={cardStyle.container}>
+            <View style={cardStyle.data}>
+                <Image style={cardStyle.icon} source={product.icon}/>
+                <Text style={cardStyle.title}>{product.name}</Text>
+                <Text style={cardStyle.content}>{product.price}</Text>
+                <Image style={cardStyle.status} source={product.statusIcon}/>
             </View>
         </View>
     );
