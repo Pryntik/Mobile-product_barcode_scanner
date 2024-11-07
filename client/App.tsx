@@ -15,12 +15,11 @@ const App = () => {
   }, []);
   
   return (
-    <SQLiteProvider databaseName="Pannier.db">
-      <NavigationContainer>
+    <SQLiteProvider databaseName="Pannier.db" children={
+      <NavigationContainer children={
         <Navigator/>
-      </NavigationContainer>      
-    </SQLiteProvider>
-
+      }/>
+    }/>
   );
 }
 

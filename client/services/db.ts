@@ -1,8 +1,8 @@
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import { SelectType } from '../types/TSQL';
-import { Nullable, ProductSaveType } from '../types/TItem';
+import { ProductSaveType } from '../types/TItem';
 
-const panier_db = openDatabaseSync('Panier.db');
+const panier_db = openDatabaseSync('Basket.db');
 
 // Fonction pour créer les tables du panier si elle n'existe pas
 export const createTables = (): Promise<void> => {
@@ -31,6 +31,10 @@ export const getProductDB = (id: number): Promise<ProductSaveType | null> => {
     return new Promise((resolve, reject) => {
         try {
             const select = panier_db.getFirstSync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
+            if (!select || !select.rows) {
+                throw new Error(`getProductDB: Query returned null for id ${id}`);
+            }
+
             const item = select.rows.length > 0 ? select.rows.item(0) : null;
             resolve(item);
         } catch (error) {
@@ -45,11 +49,16 @@ export const getAllProductsDB = (): Promise<ProductSaveType[]> => {
     return new Promise((resolve, reject) => {
         try {
             const select = panier_db.getFirstSync('SELECT * FROM Products') as SelectType<ProductSaveType>;
-            const items: ProductSaveType[] = [];
-            for (let i = 0; i < select.rows.length; i++) {
-                items.push(select.rows.item(i));
+            if (select && select.rows) {
+                const items: ProductSaveType[] = [];
+                for (let i = 0; i < select.rows.length; i++) {
+                    items.push(select.rows.item(i));
+                }
+                resolve(items);                
             }
-            resolve(items);
+            else {
+                resolve([]);
+            }
         } catch (error) {
             console.error('Error fetching all products:', error);
             reject(error);
@@ -64,12 +73,20 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
             const { id, name, price, quantity } = newProduct;
             panier_db.runSync('BEGIN TRANSACTION;');
             const select = panier_db.getFirstSync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
-            const product = select.rows.length > 0 ? select.rows.item(0) : null;
 
-            if (product) {
-                const newQuantity = product.quantity + quantity;
-                panier_db.runSync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
-            } else {
+            if (select && select.rows) {
+                const product = select.rows.length > 0 ? select.rows.item(0) : null;
+                if (product) {
+                    const newQuantity = product.quantity + quantity;
+                    panier_db.runSync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
+                }
+                else {
+                    panier_db.runSync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
+                        id, name, price, quantity
+                    );
+                }
+            }
+            else {
                 panier_db.runSync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
                     id, name, price, quantity
                 );

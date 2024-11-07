@@ -17,15 +17,9 @@ const Basket = () => {
   const [visualItems, setVisualItems] = useState<ReactElement[]>([]);
   
   useEffect(() => {
-    Promise.all(
-      items.map((item, i) =>
-        getProductCard(item).then(product => <CardProduct key={i} product={product} />)
-          .catch(error => {
-            console.error('Error Basket useEffect[items]', error);
-            return null;
-          })
-      )).then(newVisualItems => {
-        setVisualItems(newVisualItems.filter(item => item !== null));
+      items.map(async (item, i) => {
+        const productCard = await getProductCard(item);
+        setVisualItems(prevVisualItems => [...prevVisualItems, <CardProduct key={i} product={productCard} />]);
       });
   }, [items]);
 
@@ -54,9 +48,9 @@ const Basket = () => {
       </View>
       <Button title="MAJ" onPress={() => deleteItem(1)} />
       <View>
-        <StripeProvider publishableKey={stripePK} merchantIdentifier="merchant.com.example">
+        <StripeProvider publishableKey={stripePK} merchantIdentifier="merchant.com.example" children={
           <CheckoutScreen />
-        </StripeProvider>
+        }/>
       </View>
     </View>
   );

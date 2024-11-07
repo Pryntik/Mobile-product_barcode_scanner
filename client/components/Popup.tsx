@@ -1,12 +1,13 @@
-import crossIcon from "../assets/img/cross.png";
 import checkIcon from "../assets/img/check.png";
+import unknownIcon from "../assets/img/unknown.png";
+import crossIcon from "../assets/img/cross.png";
 import ImageButton from "./ImageButton";
 import CardProduct from "./CardProduct";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated } from "react-native"
+import { Animated, ToastAndroid } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProduct, getProductCard, getProductSave } from "../utils/item.util";
+import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus } from "../utils/item.util";
 import { productCardDefault, ProductCardType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
@@ -28,9 +29,11 @@ const Popup = ({
     const navigation = useNavigation<RouteType>();
     const ySize = 300;
     const dataItem = data?.scanItem;
-    const [productCard, setProductCard] = useState<ProductCardType>(productCardDefault);
-    const [isShow, setIsShow] = useState(isVisible);
     const slideAnim = useRef(new Animated.Value(ySize)).current;
+    const [isShow, setIsShow] = useState(isVisible);
+    const [productCard, setProductCard] = useState<ProductCardType>(productCardDefault);
+    const [cardQuantity, setCardQuantity] = useState(productCard.quantity);
+    const [cardPrice, setCardPrice] = useState(productCard.price);
 
     const closePopup = () => {
         Animated.timing(slideAnim, {
@@ -44,11 +47,21 @@ const Popup = ({
     };
 
     const addProduct = () => {
-        getProductSave(productCard).then(product => {
-            product && addProductDB(product);
-        }).catch(error => {
-            console.error('Error Popup addProduct:', error);
-        });
+        if (productCard.statusIcon === (checkIcon || unknownIcon)) {
+            getProductSaveFromCard({
+                ...productCard,
+                price: cardPrice,
+                quantity: cardQuantity,
+            }).then(product => {
+                addProductDB(product);
+                ToastAndroid.show('Product added to basket', ToastAndroid.SHORT);
+            }).catch(error => {
+                console.error('Error Popup addProduct:', error);
+            });
+        }
+        else {
+            ToastAndroid.show('Product not valid', ToastAndroid.SHORT);
+        }
     };
 
     useEffect(() => {
@@ -82,11 +95,15 @@ const Popup = ({
                     styleImage={popupStyle.buttonClose_image}
                     alt="Close"
                     src={crossIcon}/>
-                <CardProduct product={productCard} position="absolute"/>
+                <CardProduct
+                    product={productCard}
+                    position="absolute"
+                    getCardPrice={(price) => setCardPrice(price)}
+                    getCardQuantity={(quantity) => setCardPrice(quantity)}/>
                 <ImageButton
                     onClick={addProduct}
                     text="Add product"
-                    src={checkIcon}
+                    src={getProductValidIconStatus(productCard)}
                     alt="Add product"
                     styleView={popupStyle.buttonAdd_view}/>
             </Animated.View>

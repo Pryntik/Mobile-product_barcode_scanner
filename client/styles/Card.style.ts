@@ -52,11 +52,15 @@ export const cardStyle = StyleSheet.create({
     otherDataTop: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginBottom: 5,
     },
     otherDataBottom: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginTop: 5,
     },
     buttonQuantity: {

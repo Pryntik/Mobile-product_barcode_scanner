@@ -3,4 +3,4 @@ export type SelectType<T> = {
         length: number,
         item(index: number): T,
     }
-}
+} | null;
