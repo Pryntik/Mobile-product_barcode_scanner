@@ -15,6 +15,7 @@
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/stack": "^6.4.1",
     "@stripe/stripe-react-native": "^0.37.2",
+    "axios": "^1.7.7",
     "client": "file:",
     "expo": "^51.0.38",
     "expo-camera": "^15.0.16",
@@ -27,6 +28,7 @@
     "react-dom": "^18.2.0",
     "react-native": "^0.74.5",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-sqlite-storage": "^6.0.1",
     "react-native-web": "~0.19.10",
     "react-navigation": "^5.0.0"
   },
@@ -37,6 +39,7 @@
     "@babel/plugin-transform-flow-strip-types": "^7.25.9",
     "@babel/plugin-transform-private-methods": "^7.25.9",
     "@types/react": "~18.2.79",
+    "@types/react-native-sqlite-storage": "^6.0.5",
     "typescript": "~5.3.3"
   },
   "private": true

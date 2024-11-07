@@ -2,13 +2,12 @@ import { StyleSheet } from 'react-native';
 
 export const cardStyle = StyleSheet.create({
     container: {
-        position: 'absolute',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '30%',
+        height: 80,
         marginTop: 50,
     },
     data: {
@@ -46,4 +45,22 @@ export const cardStyle = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
+    otherData: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    otherDataTop: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 5,
+    },
+    otherDataBottom: {
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: 5,
+    },
+    buttonQuantity: {
+        width: 20,
+        height: 20,
+    }
 });

@@ -6,10 +6,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProduct, getProductCard } from "../utils/item.util";
-import { ProductType } from "../types/TItem";
+import { getProduct, getProductCard, getProductSave } from "../utils/item.util";
+import { productCardDefault, ProductCardType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
+import { addProductDB } from "../services/db";
 
 type PopupType = {
     isVisible?: boolean,
@@ -27,7 +28,7 @@ const Popup = ({
     const navigation = useNavigation<RouteType>();
     const ySize = 300;
     const dataItem = data?.scanItem;
-    const [product, setProduct] = useState<ProductType | null>(getProduct(dataItem?.data));
+    const [productCard, setProductCard] = useState<ProductCardType>(productCardDefault);
     const [isShow, setIsShow] = useState(isVisible);
     const slideAnim = useRef(new Animated.Value(ySize)).current;
 
@@ -43,11 +44,19 @@ const Popup = ({
     };
 
     const addProduct = () => {
-        navigation.navigate('Basket');
+        getProductSave(productCard).then(product => {
+            product && addProductDB(product);
+        }).catch(error => {
+            console.error('Error Popup addProduct:', error);
+        });
     };
 
     useEffect(() => {
-        setProduct(getProduct(dataItem?.data));
+        getProductCard(dataItem?.data).then(item => {
+            setProductCard(item);
+        }).catch(error => {
+            console.error('Error Popup useEffect[dataItem]:', error);
+        });
     }, [dataItem]);
 
     useEffect(() => {
@@ -73,7 +82,7 @@ const Popup = ({
                     styleImage={popupStyle.buttonClose_image}
                     alt="Close"
                     src={crossIcon}/>
-                <CardProduct product={getProductCard(product)}/>
+                <CardProduct product={productCard} position="absolute"/>
                 <ImageButton
                     onClick={addProduct}
                     text="Add product"

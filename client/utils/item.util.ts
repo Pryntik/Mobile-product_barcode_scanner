@@ -2,8 +2,9 @@ import checkIcon from "../assets/img/check.png";
 import unknownIcon from "../assets/img/unknown.png";
 import crossIcon from "../assets/img/cross.png";
 import pUnknown from "../assets/product/p_unknown.png";
-import { MaybeProductType, ProductCardType, ProductType, validProducts } from "../types/TItem";
+import { AllProductType, MaybeProductType, Nullable, productCardDefault, ProductCardType, ProductExtendType, ProductSaveType, ProductType, validProducts } from "../types/TItem";
 import { ImageSourcePropType } from "react-native";
+import { getAllProductsDB } from "../services/db";
 
 /**
  * Checks if the given item has the keys and types of a ProductType.
@@ -13,13 +14,12 @@ import { ImageSourcePropType } from "react-native";
  */
 export function hasProductKeys(item: object): boolean {
     const itemKeys = Object.keys(item);
-    const productKeys = ['name', 'price', 'id'];
+    const productKeys = ['name', 'price'];
     const hasOnlyProductKeys = itemKeys.every(key => productKeys.includes(key)) && itemKeys.length === productKeys.length;
 
     return hasOnlyProductKeys &&
         "name" in item && typeof (item as any).name === 'string' &&
-        "price" in item && typeof (item as any).price === 'number' &&
-        "id" in item && typeof (item as any).id === 'number';
+        "price" in item && typeof (item as any).price === 'number';
 }
 
 /**
@@ -55,10 +55,10 @@ export function isValidProduct(item: MaybeProductType): boolean {
  * @returns The parsed ProductType if successful, null otherwise.
  * @warning JSON.parse does not key without double quotes.
  * @warning JSON.parse does not accept commas at the end of an array or object.
- * @example JSON.parse('{"name": "Banane", "price": 199, "id": 1,}') returns null
- *                                                              ^
+ * @example JSON.parse('{"name": "Banane", "price": 199,}') returns null
+ *                                                     ^
  */
-export function parseProduct(item: MaybeProductType): ProductType | null {
+export function parseProduct(item: MaybeProductType): Nullable<ProductType> {
     if (typeof item === 'string') {
         try {
             const objectItem = JSON.parse(item);
@@ -83,13 +83,24 @@ export function parseProductOrStringify(item: MaybeProductType): ProductType | s
     return parseProduct(item) || shortProduct(item);
 }
 
+export function parsePrice(price: Nullable<number>, symbole: string): string {
+    if (price) {
+        if (price.toString().length === 1) return '0.0' + price + symbole;
+        if (price.toString().length === 2) return '0.' + price + symbole;
+        const priceBeforeCommat = price.toString().slice(0, -2);
+        const priceAfterCommat = price.toString().slice(-2);
+        return priceBeforeCommat + '.' + priceAfterCommat + symbole;
+    }
+    return '0.00' + symbole;
+}
+
 /**
  * Retrieves a ProductType from the given item.
  * 
  * @param item - The item to retrieve the ProductType from.
  * @returns The ProductType if the item is valid, null otherwise.
  */
-export function getProduct(item: MaybeProductType): ProductType | null {
+export function getProduct(item: MaybeProductType): Nullable<ProductType> {
     if (typeof item === 'string' && isProduct(item)) {
         return parseProduct(item);
     }
@@ -99,6 +110,19 @@ export function getProduct(item: MaybeProductType): ProductType | null {
     return null;
 }
 
+export async function getProductSave(item: MaybeProductType): Promise<Nullable<ProductSaveType>> {
+    const product = getProduct(item);
+    if (product) {
+        const id = await getProductId();
+        return {
+            id: id,
+            name: getProductName(product),
+            price: getProductPrice(product),
+            quantity: getProductQuantity(product),
+        };
+    }
+    return null;
+}
 
 /**
  * Returns a product card object with default values if the product information is incomplete.
@@ -106,22 +130,20 @@ export function getProduct(item: MaybeProductType): ProductType | null {
  * @param {MaybeProductType} item - The item which may or may not be a complete product.
  * @returns {ProductCardType} An object containing the product card details.
  */
-export function getProductCard(item: MaybeProductType): ProductCardType {
-    if (item) {
-        const product = item as ProductType;
+export async function getProductCard(item: MaybeProductType): Promise<ProductCardType> {
+    const product = getProduct(item);
+    if (product) {
+        const id = await getProductId();
         return {
-            icon: getIconProduct(item),
-            name: product && product.name ? product.name : 'Product unknown',
-            price: product.price ? product.price.toFixed(2) + '€' : '?€',
-            statusIcon: getStatusIcon(item),
+            id: id,
+            name: getProductName(product),
+            price: getProductPrice(product),
+            quantity: getProductQuantity(product),
+            icon: getProductIcon(product),
+            statusIcon: getIconStatus(product),
         };
     }
-    return {
-        icon: pUnknown,
-        name: 'Product unknown',
-        price: '?€',
-        statusIcon: crossIcon,
-    };
+    return productCardDefault;
 }
 
 /**
@@ -148,24 +170,43 @@ export function isNameProduct(item: MaybeProductType, nameSearch: string): boole
     return false;
 }
 
+
 /**
- * Returns the appropriate status icon based on the provided item.
- *
- * @param item - The item whose status icon is to be determined. It can be a string or a product type.
- * @returns The corresponding status icon as an ImageSourcePropType.
- *
- * If the item is a string:
- * - 'check' returns `checkIcon`
- * - 'unknown' returns `unknownIcon`
- * - Any other string returns `crossIcon`
- *
- * If the item is a product:
- * - A valid product returns `checkIcon`
- * - An invalid product returns `unknownIcon`
- *
- * If the item is neither a string nor a product, it returns `crossIcon`.
+ * Creates a ProductType.
+ * 
+ * @param name - The name of the product.
+ * @param price - The price of the product.
+ * @returns The created ProductType.
  */
-export function getStatusIcon(item: MaybeProductType): ImageSourcePropType {
+export function createProduct(name: string, price: number): ProductType {
+    return { name, price };
+}
+
+export async function getProductId(): Promise<number> {
+    return getAllProductsDB().then((products) => products.length + 1).catch(() => 1);
+}
+
+export function getProductName(item: AllProductType): string {
+    const product = item as ProductType;
+    return product && product.name ? product.name : 'Product unknown';
+}
+
+export function getProductPrice(item: AllProductType): number {
+    const product = item as ProductType;
+    return product && product.price ? product.price : 0;
+}
+
+export function getProductQuantity(item: AllProductType): number {
+    const product = item as ProductExtendType;
+    return product && product.quantity ? product.quantity : 1;
+}
+
+export function getProductIcon(item: MaybeProductType): ImageSourcePropType {
+    const product = validProducts.find(p => p.name === (item as ProductType).name);
+    return product && product.icon ? product.icon : pUnknown;
+}
+
+export function getIconStatus(item: MaybeProductType): ImageSourcePropType {
     if (typeof item === 'string') {
         switch (item) {
             case 'check': return checkIcon;
@@ -181,27 +222,4 @@ export function getStatusIcon(item: MaybeProductType): ImageSourcePropType {
         return unknownIcon;
     }
     return crossIcon;
-}
-
-/**
- * Retrieves the icon corresponding to the product of the given item.
- * 
- * @param item - The item to retrieve the icon from.
- * @returns The icon corresponding to the product of the item.
- */
-export function getIconProduct(item: MaybeProductType): ImageSourcePropType {
-    const product = validProducts.find(p => p.name === (item as ProductType).name);
-    return product && product.icon ? product.icon : pUnknown;
-}
-
-/**
- * Creates a ProductType.
- * 
- * @param name - The name of the product.
- * @param price - The price of the product.
- * @param id - The id of the product.
- * @returns The created ProductType.
- */
-export function createProduct(name: string, price: number, id: number): ProductType {
-    return { name, price, id };
 }
