@@ -7,11 +7,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, ToastAndroid } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus } from "../utils/item.util";
+import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus, stringifyProduct } from "../utils/item.util";
 import { productCardDefault, ProductCardType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
-import { addProductDB } from "../services/db";
+import { addProductDB, getAllProductsDB } from "../services/db";
 
 type PopupType = {
     isVisible?: boolean,
@@ -46,18 +46,14 @@ const Popup = ({
         });
     };
 
-    const addProduct = () => {
+    const addProduct = async () => {
         if (isValidProductStatus(productCard)) {
-            getProductSaveFromCard({
+            const producCard = getProductSaveFromCard({
                 ...productCard,
                 price: cardPrice,
                 quantity: cardQuantity,
-            }).then(product => {
-                addProductDB(product);
-                ToastAndroid.show('Product added to basket', ToastAndroid.SHORT);
-            }).catch(error => {
-                console.error('Error Popup addProduct:', error);
             });
+            await addProductDB(await producCard);
         }
         else {
             ToastAndroid.show('Product not valid', ToastAndroid.SHORT);
@@ -97,9 +93,9 @@ const Popup = ({
                     disableDefaultStyle/>
                 <CardProduct
                     product={productCard}
-                    position="absolute"
+                    style={{position: "absolute", marginTop: 50}}
                     getCardPrice={(price) => setCardPrice(price)}
-                    getCardQuantity={(quantity) => setCardPrice(quantity)}/>
+                    getCardQuantity={(quantity) => setCardQuantity(quantity)}/>
                 <ImageButton
                     onClick={addProduct}
                     text="Add product"

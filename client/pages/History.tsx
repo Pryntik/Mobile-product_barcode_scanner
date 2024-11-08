@@ -53,12 +53,7 @@ const History = () => {
 
     useFocusEffect(
         useCallback(() => {
-            getAllProductsAPI().then(products => {
-                setItems(products.data);
-                ToastAndroid.show(`History updated: items length ${items.length}`, ToastAndroid.SHORT);
-            }).catch(error => {
-                console.error('Error History useFocusEffect[]:', error);
-            });
+            majAPI();
         }, [])
     );
 

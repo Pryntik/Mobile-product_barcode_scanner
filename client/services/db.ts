@@ -1,8 +1,7 @@
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import { SelectType } from '../types/TSQL';
-import { ProductSaveType } from '../types/TItem';
-import { ToastAndroid } from 'react-native';
-import { stringifyProduct } from '../utils/item.util';
+import { Nullable, ProductSaveType } from '../types/TItem';
+import { getProductSave, stringifyProduct } from '../utils/item.util';
 
 const panier_db = openDatabaseSync('Basket.db');
 
@@ -11,15 +10,14 @@ export const createTables = (): Promise<void> => {
     const ProductsQuery = `
         DROP TABLE IF EXISTS Products;
         CREATE TABLE IF NOT EXISTS Products (
+            id INTEGER PRIMARY KEY NOT NULL,
             name TEXT,
             price INTEGER,
-            quantity INTEGER,
-            id INTEGER DEFAULT 1,
-            PRIMARY KEY(id)
+            quantity INTEGER
         );`;
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            panier_db.execSync(ProductsQuery);
+            panier_db.execAsync(ProductsQuery);
             resolve();
         } catch (error) {
             console.error(error);
@@ -29,16 +27,14 @@ export const createTables = (): Promise<void> => {
 };
 
 // Obtenir un produit du panier
-export const getProductDB = (id: number): Promise<ProductSaveType | null> => {
-    return new Promise((resolve, reject) => {
+export const getProductDB = (id: number): Promise<Nullable<ProductSaveType>> => {
+    return new Promise(async (resolve, reject) => {
         try {
-            const select = panier_db.getFirstSync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
-            if (!select || !select.rows) {
+            const select = await panier_db.getFirstAsync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
+            if (!select) {
                 throw new Error(`getProductDB: Query returned null for id ${id}`);
             }
-
-            const item = select.rows.length > 0 ? select.rows.item(0) : null;
-            resolve(item);
+            resolve(select);
         } catch (error) {
             console.error(`Error fetching product with id ${id}:`, error);
             reject(error);
@@ -48,13 +44,13 @@ export const getProductDB = (id: number): Promise<ProductSaveType | null> => {
 
 // Obtenir tous les produits du panier
 export const getAllProductsDB = (): Promise<ProductSaveType[]> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            const select = panier_db.getFirstSync('SELECT * FROM Products') as SelectType<ProductSaveType>;
-            if (select && select.rows) {
+            const select = await panier_db.getAllAsync('SELECT * FROM Products') as SelectType<ProductSaveType[]>;
+            if (select) {
                 const items: ProductSaveType[] = [];
-                for (let i = 0; i < select.rows.length; i++) {
-                    items.push(select.rows.item(i));
+                for (let i = 0; i < select.length; i++) {
+                    items.push(select[i]);
                 }
                 resolve(items);                
             }
@@ -70,29 +66,27 @@ export const getAllProductsDB = (): Promise<ProductSaveType[]> => {
 
 // Insertion d'un produit dans le panier
 export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             const { id, name, price, quantity } = newProduct;
-            panier_db.runSync('BEGIN TRANSACTION;');
-            const select = panier_db.getFirstSync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
+            await panier_db.runAsync('BEGIN TRANSACTION;');
+            const select = await panier_db.getFirstAsync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
 
-            console.log(stringifyProduct(select))
-            if (select && select.rows && select.rows.length > 0) {
-                const product: ProductSaveType = select.rows.item(0);
-                const newQuantity = product.quantity + quantity;
-                panier_db.runSync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
+            if (select) {
+                const newQuantity = select.quantity + quantity;
+                await panier_db.runAsync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
             }
             else {
-                panier_db.runSync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
+                await panier_db.runAsync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
                     id, name, price, quantity
                 );
             }
 
-            panier_db.runSync('COMMIT;');
+            await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
             console.error('Error adding product:', error);
-            panier_db.runSync('ROLLBACK;');
+            await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
     });
@@ -100,9 +94,9 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
 
 // Suppression d'un produit du panier
 export const deleteProductDB = (id: number): Promise<void> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            panier_db.runSync('DELETE FROM Products WHERE id = ?;', id);
+            await panier_db.runAsync('DELETE FROM Products WHERE id = ?;', id);
             resolve();
         } catch (error) {
             console.error(`Error deleting product with id ${id}:`, error);
@@ -113,9 +107,9 @@ export const deleteProductDB = (id: number): Promise<void> => {
 
 // Suppression de tous les produits du panier
 export const deleteAllProductsDB = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            panier_db.runSync('DELETE FROM Products;');
+            await panier_db.runAsync('DELETE FROM Products;');
             resolve();
         } catch (error) {
             console.error('Error deleting all products:', error);

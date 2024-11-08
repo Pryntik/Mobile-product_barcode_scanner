@@ -2,7 +2,8 @@ import { ToastAndroid } from 'react-native';
 import { ReponseType } from '../types/TAPI';
 import { ProductSaveType, ProductType } from '../types/TItem';
 
-const apiUrl = `http://${process.env.API_IP}:8000`;
+export const apiUrl = `http://${process.env.API_IP}:${process.env.API_PORT}`;
+export const userId = `${process.env.USER_ID}`;
 
 export const getAllProductsAPI = async (): Promise<ReponseType<ProductSaveType[]>> => {
     try {

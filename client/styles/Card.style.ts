@@ -8,7 +8,6 @@ export const cardStyle = StyleSheet.create({
         justifyContent: 'center',
         width: '100%',
         height: 80,
-        marginTop: 50,
     },
     data: {
         display: 'flex',
@@ -48,6 +47,7 @@ export const cardStyle = StyleSheet.create({
     otherData: {
         display: 'flex',
         flexDirection: 'column',
+        width: '25%',
     },
     otherDataTop: {
         display: 'flex',

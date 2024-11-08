@@ -1,6 +1,3 @@
-export type SelectType<T> = {
-    rows: {
-        length: number,
-        item(index: number): T,
-    }
-} | null;
+import { Nullable } from "./TItem";
+
+export type SelectType<T> = Nullable<T>

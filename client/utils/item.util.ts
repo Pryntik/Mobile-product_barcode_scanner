@@ -3,7 +3,7 @@ import unknownIcon from "../assets/img/unknown.png";
 import crossIcon from "../assets/img/cross.png";
 import pUnknown from "../assets/product/p_unknown.png";
 import { AllProductType, MaybeProductType, Nullable, productCardDefault, ProductCardType, ProductExtendType, ProductSaveType, ProductType, validProducts } from "../types/TItem";
-import { ImageSourcePropType, NativeSyntheticEvent, TextInputChangeEventData, ToastAndroid } from "react-native";
+import { ImageSourcePropType } from "react-native";
 import { getAllProductsDB } from "../services/db";
 
 /* GET */
@@ -73,8 +73,15 @@ export async function getProductCard(item: MaybeProductType): Promise<ProductCar
     return productCardDefault;
 }
 
+/** Retrieves a ProductCardType from the given item.
+ * 
+ * @param item - The item to retrieve the ProductCardType from.
+ * @returns The ProductCardType if the item is valid, null otherwise.
+ */
 export async function getProductId(): Promise<number> {
-    return getAllProductsDB().then((products) => products.length + 1).catch(() => 1);
+    const products = await getAllProductsDB();
+    if (products.length === 0) return 1;
+    return products.length + 1;
 }
 
 export function getProductName(item: AllProductType): string {
@@ -274,13 +281,12 @@ export function parsePrice(price: Nullable<number>, symbole: string): string {
     return '0.00' + symbole;
 }
 
-export function parseQuantity(quantity: number, valueAdd: number | NativeSyntheticEvent<TextInputChangeEventData>): string {
+export function parseQuantity(quantity: number, valueAdd: number | string): string {
     if (typeof valueAdd === 'number') {
         return getNewQuantity(quantity, valueAdd).toString();
     }
-    const text = valueAdd.nativeEvent.text;
-    if (text.length === 0 || isNaN(parseInt(text))) {
+    if (valueAdd.length === 0 || isNaN(parseInt(valueAdd))) {
         return '0';
     }
-    return getNewQuantity(0, parseInt(text)).toString();
+    return getNewQuantity(0, parseInt(valueAdd)).toString();
 }
