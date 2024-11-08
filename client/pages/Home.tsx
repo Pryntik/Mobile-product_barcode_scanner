@@ -26,7 +26,7 @@ const Home = () => {
             <Popup
                 isVisible={popupIsVisible}
                 isClosed={popupIsClose}
-                data={{scanItem: scanResult}}/>
+                data={{type: 'card', scanItem: scanResult}}/>
         </View>
     );
 }

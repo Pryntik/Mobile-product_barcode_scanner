@@ -8,6 +8,17 @@ export const basketStyle = StyleSheet.create({
     scroll_view: {
         height: '100%',
     },
+    buttons_view: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '100%',
+        height: 100,
+        backgroundColor: 'white',
+        borderWidth: 2,
+        borderColor: '#f0f0f0',
+    },
     empty_view: {
         display: 'flex',
         flexDirection: 'column',
@@ -25,32 +36,28 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'transparent',
         color: '#a9a9a9',
     },
-    checkout_view: {
+    button_view: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
         height: 100,
-        borderWidth: 2,
-        borderColor: '#f0f0f0',
     },
-    checkout_button: {
+    button_button: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        width: 120,
+        width: 110,
         height: 40,
         borderRadius: 10,
-        backgroundColor: 'lightblue',
     },
-    checkout_text: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    button_text: {
+        fontSize: 12,
     },
-    checkout_image: {
-        width: 25,
-        height: 25,
-    }
+    button_image: {
+        width: 20,
+        height: 20,
+    },
 });

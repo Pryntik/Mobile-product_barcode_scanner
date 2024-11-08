@@ -109,7 +109,7 @@ export const deleteProductDB = (id: number): Promise<void> => {
 export const deleteAllProductsDB = (): Promise<void> => {
     return new Promise(async (resolve, reject) => {
         try {
-            await panier_db.runAsync('DELETE FROM Products;');
+            await panier_db.runAsync('TRUNCATE TABLE Products;');
             resolve();
         } catch (error) {
             console.error('Error deleting all products:', error);

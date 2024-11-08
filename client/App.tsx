@@ -11,15 +11,14 @@ const App = () => {
       await lockAsync(OrientationLock.PORTRAIT_UP);
     };
     lockOrientation();
-    createTables();
   }, []);
   
   return (
-    <SQLiteProvider databaseName="Pannier.db" children={
-      <NavigationContainer children={
+    <SQLiteProvider databaseName="Basket.db" onInit={createTables}>
+      <NavigationContainer>
         <Navigator/>
-      }/>
-    }/>
+      </NavigationContainer>
+    </SQLiteProvider>
   );
 }
 

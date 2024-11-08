@@ -7,16 +7,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, ToastAndroid } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus, stringifyProduct } from "../utils/item.util";
+import { getProduct, getProductCard, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus } from "../utils/item.util";
 import { productCardDefault, ProductCardType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
-import { addProductDB, getAllProductsDB } from "../services/db";
+import { addProductDB } from "../services/db";
+
+type PopupDataType = 'card' | 'form';
 
 type PopupType = {
     isVisible?: boolean,
     isClosed?(isClose: boolean): void,
+    type?: string,
     data?: {
+        type: PopupDataType,
         scanItem?: BarcodeScanningResult,
     }
 }

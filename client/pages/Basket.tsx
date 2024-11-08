@@ -1,19 +1,18 @@
 import emptyBasketIcon from "../assets/img/basket_empty.png";
-import CheckoutButton from "../components/CheckoutButton";
+import Checkout from "../components/Checkout";
 import CardProduct from "../components/CardProduct";
 import ImageButton from "../components/ImageButton";
-import Constants from 'expo-constants';
+import EmptyBasket from "../components/EmptyBasket";
+import ManualProduct from "../components/ManualProduct";
 import React, { useState, useCallback, ReactElement, useEffect } from "react";
-import { StripeProvider } from "@stripe/stripe-react-native";
 import { View, Text, ScrollView } from "react-native";
 import { ProductSaveType } from "../types/TItem";
-import { getProductCard, isValidProductStatus, stringifyProduct } from "../utils/item.util";
+import { getProductCard, isValidProductStatus } from "../utils/item.util";
 import { useFocusEffect } from '@react-navigation/native';
 import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
 
 const Basket = () => {
-    const stripePK = Constants?.expoConfig?.extra?.stripePK;
     const [items, setItems] = useState<ProductSaveType[]>([]);
     const [cardProducts, setCardProducts] = useState<ReactElement[]>([]);
 
@@ -26,10 +25,10 @@ const Basket = () => {
                 <ScrollView style={basketStyle.scroll_view}>
                     {getCardProducts()}
                 </ScrollView>
-                <View>
-                    <StripeProvider publishableKey={stripePK} merchantIdentifier="univ.com.barcodescanner" children={
-                        <CheckoutButton />
-                    }/>
+                <View style={basketStyle.buttons_view}>
+                    <EmptyBasket/>
+                    <Checkout />
+                    <ManualProduct/>
                 </View>
             </>
         );
@@ -53,7 +52,6 @@ const Basket = () => {
   
 useEffect(() => {
     const updateCardProducts = async () => {
-        let key = 0;
         const products = await getAllProductsDB();
         const updatedCardProducts: ReactElement[] = [];
 
@@ -61,10 +59,9 @@ useEffect(() => {
             const productCard = await getProductCard(product);
             if (isValidProductStatus(productCard)) {
                 updatedCardProducts.push(
-                    <CardProduct key={key} product={productCard} style={{ marginTop: 20 }} />
+                    <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
                 );
             }
-            key++;
         }
         setItems(products);
         setCardProducts(updatedCardProducts);
