@@ -215,6 +215,10 @@ export function isNameProduct(item: MaybeProductType, nameSearch: string): boole
     return false;
 }
 
+export function isValidProductStatus(item: ProductCardType): boolean {
+    return item.statusIcon === checkIcon || item.statusIcon === unknownIcon;
+}
+
 /* STRING */
 
 /** Parses a stringified item into a ProductType.

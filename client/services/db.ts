@@ -1,6 +1,8 @@
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import { SelectType } from '../types/TSQL';
 import { ProductSaveType } from '../types/TItem';
+import { ToastAndroid } from 'react-native';
+import { stringifyProduct } from '../utils/item.util';
 
 const panier_db = openDatabaseSync('Basket.db');
 
@@ -14,7 +16,7 @@ export const createTables = (): Promise<void> => {
             quantity INTEGER,
             id INTEGER DEFAULT 1,
             PRIMARY KEY(id)
-        )`;
+        );`;
     return new Promise((resolve, reject) => {
         try {
             panier_db.execSync(ProductsQuery);
@@ -74,23 +76,18 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
             panier_db.runSync('BEGIN TRANSACTION;');
             const select = panier_db.getFirstSync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
 
-            if (select && select.rows) {
-                const product = select.rows.length > 0 ? select.rows.item(0) : null;
-                if (product) {
-                    const newQuantity = product.quantity + quantity;
-                    panier_db.runSync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
-                }
-                else {
-                    panier_db.runSync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
-                        id, name, price, quantity
-                    );
-                }
+            console.log(stringifyProduct(select))
+            if (select && select.rows && select.rows.length > 0) {
+                const product: ProductSaveType = select.rows.item(0);
+                const newQuantity = product.quantity + quantity;
+                panier_db.runSync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
             }
             else {
                 panier_db.runSync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
                     id, name, price, quantity
                 );
             }
+
             panier_db.runSync('COMMIT;');
             resolve();
         } catch (error) {

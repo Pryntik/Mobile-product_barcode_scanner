@@ -9,7 +9,7 @@ export type Undefinebale<T> = T | undefined;
 
 export type Maybe<T> = T | null | undefined;
 
-export type MaybeProductType = Maybe<ProductType> | string | object;
+export type MaybeProductType = Maybe<AllProductType> | string | object;
 
 export type ProductExtendType = ProductSaveType | ProductCardType;
 

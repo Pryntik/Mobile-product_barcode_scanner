@@ -1,20 +1,17 @@
+import { ToastAndroid } from 'react-native';
 import { ReponseType } from '../types/TAPI';
 import { ProductSaveType, ProductType } from '../types/TItem';
 
 const apiUrl = `http://${process.env.API_IP}:8000`;
 
 export const getAllProductsAPI = async (): Promise<ReponseType<ProductSaveType[]>> => {
-    console.log('getAllProducts 1');
     try {
-        console.log('getAllProducts 2');
         const response = await fetch(`${apiUrl}/items/`);
-        console.log('getAllProducts 3');
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        console.log('getAllProducts 4');
         const json: ReponseType<ProductSaveType[]> = await response.json();
-        console.log('getAllProducts 5');
+        ToastAndroid.show(`Items fetched: ${json.data.length}`, ToastAndroid.SHORT);
         return json;
     } catch (error) {
         console.error('Error fetching items:', error);
@@ -52,7 +49,6 @@ export const getProductAPI = async (productId: number): Promise<ReponseType<Prod
 
 export async function postProduct(product: ProductType): Promise<ReponseType<ProductSaveType>> {    
     try {
-        console.log('postProduct 1');
         const response = await fetch(`${apiUrl}/items/`, {
             method: "POST",
             headers: {
@@ -60,13 +56,11 @@ export async function postProduct(product: ProductType): Promise<ReponseType<Pro
             },
             body: JSON.stringify(product),
         });
-        console.log('postProduct 2');
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
-        console.log('postProduct 3');
         const json: ReponseType<ProductSaveType> = await response.json();
-        console.log('json', json);
+        ToastAndroid.show('Product added successfully', ToastAndroid.SHORT);
         return json;
     } catch (error) {
         console.error('Error postProduct', error);
@@ -94,16 +88,16 @@ export const deleteAllProductsAPI = async (): Promise<ReponseType<ProductSaveTyp
     try {
         const products = await getAllProductsAPI();
         if (!products || products.data.length === 0) {
-            console.log('No items to delete');
+            ToastAndroid.show('No items to delete', ToastAndroid.SHORT);
             return;
         }
 
         for (const product of products.data) {
             await deleteProductAPI(product.id);
-            console.log(`Deleted item with id ${product.id}`);
+            ToastAndroid.show(`Deleted item with id ${product.id}`, ToastAndroid.SHORT);
         }
 
-        console.log('All items deleted successfully');
+        ToastAndroid.show('All items deleted successfully', ToastAndroid.SHORT);
     } catch (error) {
         console.error('Error deleting all items:', error);
         throw error;

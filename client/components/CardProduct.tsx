@@ -56,7 +56,7 @@ const CardProduct = ({
                         <ImageButton
                             styleImage={cardStyle.buttonQuantity}
                             src={lessIcon} onClick={() => changeQuantity(-1)}
-                            disableDefaultStyle={true}/>
+                            disableDefaultStyle/>
                         <TextInput
                             style={cardStyle.content}
                             keyboardType="numeric"
@@ -65,7 +65,7 @@ const CardProduct = ({
                         <ImageButton
                             styleImage={cardStyle.buttonQuantity}
                             src={moreIcon} onClick={() => changeQuantity(1)}
-                            disableDefaultStyle={true}/>
+                            disableDefaultStyle/>
                     </View>
                 </View>
             </View>

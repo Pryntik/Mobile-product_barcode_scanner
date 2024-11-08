@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Animated, ToastAndroid } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
 import { BarcodeScanningResult } from "expo-camera";
-import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus } from "../utils/item.util";
+import { getProduct, getProductCard, getProductSave, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus } from "../utils/item.util";
 import { productCardDefault, ProductCardType } from "../types/TItem";
 import { useNavigation } from "@react-navigation/native";
 import { RouteType } from "../types/TLink";
@@ -47,7 +47,7 @@ const Popup = ({
     };
 
     const addProduct = () => {
-        if (productCard.statusIcon === (checkIcon || unknownIcon)) {
+        if (isValidProductStatus(productCard)) {
             getProductSaveFromCard({
                 ...productCard,
                 price: cardPrice,
@@ -90,11 +90,11 @@ const Popup = ({
             <Animated.View style={[popupStyle.container, {transform: [{translateY: slideAnim}]}]}>
                 <ImageButton 
                     onClick={closePopup}
-                    disableDefaultStyle={true}
+                    src={crossIcon}
+                    alt="Close"
                     styleView={popupStyle.buttonClose_view}
                     styleImage={popupStyle.buttonClose_image}
-                    alt="Close"
-                    src={crossIcon}/>
+                    disableDefaultStyle/>
                 <CardProduct
                     product={productCard}
                     position="absolute"

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export const basketStyle = StyleSheet.create({
+export const historyStyle = StyleSheet.create({
     container: {
         backgroundColor: 'white',
     },
