@@ -4,41 +4,51 @@ import CardProduct from "../components/CardProduct";
 import ImageButton from "../components/ImageButton";
 import EmptyBasket from "../components/EmptyBasket";
 import ManualProduct from "../components/ManualProduct";
-import React, { useState, useCallback, ReactElement, useEffect } from "react";
+import Popup from "../components/Popup";
+import React, { useState, ReactElement, useCallback, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { ProductSaveType } from "../types/TItem";
-import { getProductCard, isValidProductStatus } from "../utils/item.util";
-import { useFocusEffect } from '@react-navigation/native';
 import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
+import { getProductCard, isValidProductStatus } from "../utils/item.util";
+import { useFocusEffect } from '@react-navigation/native';
 
 const Basket = () => {
     const [items, setItems] = useState<ProductSaveType[]>([]);
     const [cardProducts, setCardProducts] = useState<ReactElement[]>([]);
+    const [showManualProduct, setShowManualProduct] = useState(false);
 
     const getCardProducts = () => cardProducts.map(cardProduct => cardProduct);
 
+    const popupIsClose = (isClose: boolean) => {
+        if (isClose === true) {
+            setShowManualProduct(false);
+        }
+    }
+
     const basketViewMode = () => {
         if (cardProducts.length > 0) {
-        return (
-            <>
-                <ScrollView style={basketStyle.scroll_view}>
-                    {getCardProducts()}
-                </ScrollView>
-                <View style={basketStyle.buttons_view}>
-                    <EmptyBasket/>
-                    <Checkout />
-                    <ManualProduct/>
-                </View>
-            </>
-        );
+            return (
+                <>
+                    <ScrollView style={basketStyle.scroll_view}>
+                        {getCardProducts()}
+                    </ScrollView>
+                    <View style={basketStyle.buttons_view}>
+                        <EmptyBasket/>
+                        <Checkout />
+                        <ManualProduct
+                            getClick={(isClick) => setShowManualProduct(isClick)}
+                            setClick={showManualProduct}/>
+                    </View>
+                </>
+            );
         }
         return (
             <View style={basketStyle.empty_view}>
                 <ImageButton
                     src={emptyBasketIcon}
                     onClick={majDB}
-                    styleImage={basketStyle.empty_image}
+                    style={{image: basketStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={basketStyle.empty_text}>Empty</Text>
             </View>
@@ -80,6 +90,11 @@ useEffect(() => {
     return (
         <View style={basketStyle.container}>
             {basketViewMode()}
+            <Popup
+                isVisible={showManualProduct}
+                isClosed={popupIsClose}
+                data={{type: 'form'}}
+                style={{view: basketStyle.manual_view}}/>
         </View>
     );
 };

@@ -2,11 +2,18 @@ import React, { useState } from "react";
 import { Pressable, Text, Image, ImageSourcePropType, StyleProp, ViewStyle, ImageStyle, TextStyle, Button, View, ColorValue } from "react-native";
 import { buttonStyle } from "../styles/Button.style";
 
-type ColorButtonType = {
+type ColorImageButtonType = {
     color?: ColorValue,
     backgroundColor?: ColorValue,
     clickColor?: ColorValue,
     disabledColor?: ColorValue,
+}
+
+type StyleImageButtonType = {
+    view?: StyleProp<ViewStyle>,
+    button?: StyleProp<ViewStyle>,
+    text?: StyleProp<TextStyle>,
+    image?: StyleProp<ImageStyle>,
 }
 
 type ImageButtonType = {
@@ -16,11 +23,8 @@ type ImageButtonType = {
     text?: string,
     alt?: string,
     src?: ImageSourcePropType,
-    colorButton?: ColorButtonType,
-    styleView?: StyleProp<ViewStyle>,
-    styleButton?: StyleProp<ViewStyle>,
-    styleText?: StyleProp<TextStyle>,
-    styleImage?: StyleProp<ImageStyle>,
+    style: StyleImageButtonType,
+    colorButton?: ColorImageButtonType,
 }
 
 const ImageButton = ({
@@ -30,28 +34,25 @@ const ImageButton = ({
     text,
     alt,
     src,
+   style,    
     colorButton = {
         color: 'black',
         backgroundColor: 'white',
         clickColor: '#f0f0f0',
         disabledColor: '#dfdfdf',
     },
-    styleView,
-    styleButton,
-    styleText,
-    styleImage,
 }: ImageButtonType) => {
     const [isClicked, setIsClicked] = useState(false);
 
-    const stylesView: StyleProp<ViewStyle>[] = [styleView, buttonStyle.imageButton_view]
-    const stylesButton: StyleProp<ViewStyle>[] = [styleView, buttonStyle.imageButton_button, {borderColor: colorButton.color}]
-    const stylesText: StyleProp<TextStyle>[] = [styleText, buttonStyle.imageButton_text]
-    const stylesImage: StyleProp<ImageStyle>[] = [styleImage, buttonStyle.imageButton_image]
+    const stylesView: StyleProp<ViewStyle>[] = [style.view, buttonStyle.imageButton_view]
+    const stylesButton: StyleProp<ViewStyle>[] = [style.view, buttonStyle.imageButton_button, {borderColor: colorButton.color}]
+    const stylesText: StyleProp<TextStyle>[] = [style.text, buttonStyle.imageButton_text]
+    const stylesImage: StyleProp<ImageStyle>[] = [style.image, buttonStyle.imageButton_image]
 
-    const sView = disableDefaultStyle ? styleView : stylesView;
-    const sButton = disableDefaultStyle ? styleButton : stylesButton;
-    const sText = disableDefaultStyle ? styleText : stylesText;
-    const sImage = disableDefaultStyle ? styleImage : stylesImage;
+    const sView = disableDefaultStyle ? style.view : stylesView;
+    const sButton = disableDefaultStyle ? style.button : stylesButton;
+    const sText = disableDefaultStyle ? style.text : stylesText;
+    const sImage = disableDefaultStyle ? style.image : stylesImage;
 
     const otherButtonStyle = () => {
         if (disableButton) return {backgroundColor: colorButton.disabledColor};

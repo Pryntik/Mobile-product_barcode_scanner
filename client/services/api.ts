@@ -1,18 +1,18 @@
-import { ToastAndroid } from 'react-native';
 import { ReponseType } from '../types/TAPI';
 import { ProductSaveType, ProductType } from '../types/TItem';
+import { toast } from '../utils/log.util';
 
 export const apiUrl = `http://${process.env.API_IP}:${process.env.API_PORT}`;
 export const userId = `${process.env.USER_ID}`;
 
-export const getAllProductsAPI = async (): Promise<ReponseType<ProductSaveType[]>> => {
+export async function getAllProductsAPI(): Promise<ReponseType<ProductSaveType[]>> {
     try {
         const response = await fetch(`${apiUrl}/items/`);
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
         const json: ReponseType<ProductSaveType[]> = await response.json();
-        ToastAndroid.show(`Items fetched: ${json.data.length}`, ToastAndroid.SHORT);
+        toast(`Items fetched: ${json.data.length}`);
         return json;
     } catch (error) {
         console.error('Error fetching items:', error);
@@ -20,7 +20,7 @@ export const getAllProductsAPI = async (): Promise<ReponseType<ProductSaveType[]
     }
 }
 
-export const getProductsAPI = async (offset = 0, limit = 100): Promise<ReponseType<ProductSaveType[]>> => {
+export async function getProductsAPI(offset = 0, limit = 100): Promise<ReponseType<ProductSaveType[]>> {
     try {
         const response = await fetch(`${apiUrl}/items/?offset=${offset}&limit=${limit}`);
         if (!response.ok) {
@@ -34,7 +34,7 @@ export const getProductsAPI = async (offset = 0, limit = 100): Promise<ReponseTy
     }
 }
 
-export const getProductAPI = async (productId: number): Promise<ReponseType<ProductSaveType>> => {
+export async function getProductAPI(productId: number): Promise<ReponseType<ProductSaveType>> {
     try {
         const response = await fetch(`${apiUrl}/items/${productId}`);
         if (!response.ok) {
@@ -61,7 +61,7 @@ export async function postProduct(product: ProductType): Promise<ReponseType<Pro
             throw new Error(`Response status: ${response.status}`);
         }
         const json: ReponseType<ProductSaveType> = await response.json();
-        ToastAndroid.show('Product added successfully', ToastAndroid.SHORT);
+        toast('Product added successfully');
         return json;
     } catch (error) {
         console.error('Error postProduct', error);
@@ -69,7 +69,7 @@ export async function postProduct(product: ProductType): Promise<ReponseType<Pro
     }
 }
 
-export const deleteProductAPI = async (productId: number): Promise<ReponseType<ProductSaveType>> => {
+export async function deleteProductAPI(productId: number): Promise<ReponseType<ProductSaveType>> {
     try {
         const response = await fetch(`${apiUrl}/items/?item_id=${productId}`, {
             method: "DELETE",
@@ -85,20 +85,20 @@ export const deleteProductAPI = async (productId: number): Promise<ReponseType<P
     }
 }
 
-export const deleteAllProductsAPI = async (): Promise<ReponseType<ProductSaveType[]> | undefined> => {
+export async function deleteAllProductsAPI(): Promise<ReponseType<ProductSaveType[]> | undefined> {
     try {
         const products = await getAllProductsAPI();
         if (!products || products.data.length === 0) {
-            ToastAndroid.show('No items to delete', ToastAndroid.SHORT);
+            toast('No items to delete');
             return;
         }
 
         for (const product of products.data) {
             await deleteProductAPI(product.id);
-            ToastAndroid.show(`Deleted item with id ${product.id}`, ToastAndroid.SHORT);
+            toast(`Deleted item with id ${product.id}`);
         }
 
-        ToastAndroid.show('All items deleted successfully', ToastAndroid.SHORT);
+        toast('All items deleted successfully');
     } catch (error) {
         console.error('Error deleting all items:', error);
         throw error;

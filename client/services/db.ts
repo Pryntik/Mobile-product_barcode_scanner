@@ -1,7 +1,6 @@
-import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
+import { openDatabaseSync } from 'expo-sqlite';
 import { SelectType } from '../types/TSQL';
 import { Nullable, ProductSaveType } from '../types/TItem';
-import { getProductSave, stringifyProduct } from '../utils/item.util';
 
 const panier_db = openDatabaseSync('Basket.db');
 
@@ -9,11 +8,11 @@ const panier_db = openDatabaseSync('Basket.db');
 export const createTables = (): Promise<void> => {
     const ProductsQuery = `
         DROP TABLE IF EXISTS Products;
-        CREATE TABLE IF NOT EXISTS Products (
-            id INTEGER PRIMARY KEY NOT NULL,
-            name TEXT,
-            price INTEGER,
-            quantity INTEGER
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL,
+            price REAL NOT NULL,
+            quantity INTEGER NOT NULL
         );`;
     return new Promise(async (resolve, reject) => {
         try {

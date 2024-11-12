@@ -2,13 +2,13 @@ import emptyHistoryIcon from "../assets/img/history_empty.png";
 import ImageButton from "../components/ImageButton";
 import CardProduct from "../components/CardProduct";
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
-import { Text, ToastAndroid, View } from "react-native";
+import { Text, View } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import { ProductType } from "../types/TItem";
 import { getAllProductsAPI } from "../services/api";
 import { historyStyle } from "../styles/History.style";
-import { getAllProductsDB } from "../services/db";
 import { getProductCard } from "../utils/item.util";
+import { toast } from "../utils/log.util";
 
 const History = () => {
     const [items, setItems] = useState<ProductType[]>([]);
@@ -31,7 +31,7 @@ const History = () => {
                 <ImageButton
                     src={emptyHistoryIcon}
                     onClick={majAPI}
-                    styleImage={historyStyle.empty_image}
+                    style={{image: historyStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={historyStyle.empty_text}>Empty</Text>
             </View>
@@ -41,7 +41,7 @@ const History = () => {
     const majAPI = async () => {
         const products = await getAllProductsAPI();
         setItems(products.data);
-        ToastAndroid.show(`History updated: items length ${items.length}`, ToastAndroid.SHORT);
+        toast(`History updated: items length ${items.length}`);
     }
 
     useEffect(() => {

@@ -11,10 +11,12 @@ const EmptyBasket = () => {
 
     return (
         <ImageButton
-        styleView={basketStyle.button_view}
-        styleButton={basketStyle.button_button}
-        styleText={basketStyle.button_text}
-        styleImage={basketStyle.button_image}
+        style={{
+            view: basketStyle.button_view,
+            button: basketStyle.button_button,
+            text: basketStyle.button_text,
+            image: basketStyle.button_image,
+        }}
         colorButton={{backgroundColor: 'lightcoral', clickColor: '#f0f0f0'}}
         text="Empty basket"
         src={emptyBasketIcon}

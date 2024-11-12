@@ -9,9 +9,11 @@ const Home = () => {
     const [popupIsVisible, setPopupIsVisible] = useState(false);
     const [scanResult, setScanResult] = useState<BarcodeScanningResult | undefined>(undefined);
 
-    const popupIsClose = () => {
-        setPopupIsVisible(false);
-        setScanResult(undefined);
+    const popupIsClose = (isClose: boolean) => {
+        if (isClose === true) {
+            setPopupIsVisible(false);
+            setScanResult(undefined);
+        }
     }
 
     useEffect(() => {

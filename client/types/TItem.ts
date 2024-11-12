@@ -1,4 +1,6 @@
 import crossIcon from "../assets/img/cross.png";
+import pBanana from "../assets/product/p_banana.png";
+import pApple from "../assets/product/p_apple.png";
 import pUnknown from "../assets/product/p_unknown.png";
 import { ImageSourcePropType } from "react-native";
 
@@ -54,7 +56,11 @@ export type ProductIconType = {
 
 export const validProducts: ProductIconType[] = [{
     name: "Banane",
-    icon: require("../assets/product/p_banana.png"),
+    icon: pBanana,
+},
+{
+    name: "Pomme",
+    icon: pApple,
 }]
 
 // Example
