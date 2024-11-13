@@ -51,6 +51,11 @@ const Basket = () => {
                     style={{image: basketStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={basketStyle.empty_text}>Empty</Text>
+                <View style={basketStyle.buttons_view}>
+                    <ManualProduct
+                        getClick={(isClick) => setShowManualProduct(isClick)}
+                        setClick={showManualProduct}/>
+                </View>
             </View>
         );
     }
@@ -60,26 +65,25 @@ const Basket = () => {
         setItems(products);
     }
   
-useEffect(() => {
-    const updateCardProducts = async () => {
-        const products = await getAllProductsDB();
-        const updatedCardProducts: ReactElement[] = [];
+    useEffect(() => {
+        const updateCardProducts = async () => {
+            const products = await getAllProductsDB();
+            const updatedCardProducts: ReactElement[] = [];
 
-        for (const product of products) {
-            const productCard = await getProductCard(product);
-            if (isValidProductStatus(productCard)) {
-                updatedCardProducts.push(
-                    <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
-                );
+            for (const product of products) {
+                const productCard = await getProductCard(product);
+                if (isValidProductStatus(productCard)) {
+                    updatedCardProducts.push(
+                        <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
+                    );
+                }
             }
-        }
-        setItems(products);
-        setCardProducts(updatedCardProducts);
-    };
+            setItems(products);
+            setCardProducts(updatedCardProducts);
+        };
 
-    updateCardProducts();
-}, [items]);
-
+        updateCardProducts();
+    }, [items]);
 
     useFocusEffect(
         useCallback(() => {

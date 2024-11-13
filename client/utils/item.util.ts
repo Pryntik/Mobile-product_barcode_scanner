@@ -52,6 +52,18 @@ export async function getProductSaveFromCard(item: ProductCardType): Promise<Pro
     };
 }
 
+export async function getProductCardFromSave(item: ProductSaveType): Promise<ProductCardType> {
+    const id = await getProductId();
+    return {
+        id: item.id || id,
+        name: getProductName(item),
+        price: getProductPrice(item),
+        quantity: getProductQuantity(item),
+        icon: getProductIcon(item),
+        statusIcon: getProductIconStatus(item),
+    };
+}
+
 /** Returns a product card object with default values if the product information is incomplete.
  *
  * @param {MaybeProductType} item - The item which may or may not be a complete product.

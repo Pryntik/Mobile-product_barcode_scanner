@@ -8,7 +8,6 @@ import { ProductType } from "../types/TItem";
 import { getAllProductsAPI } from "../services/api";
 import { historyStyle } from "../styles/History.style";
 import { getProductCard } from "../utils/item.util";
-import { toast } from "../utils/log.util";
 
 const History = () => {
     const [items, setItems] = useState<ProductType[]>([]);
@@ -41,7 +40,6 @@ const History = () => {
     const majAPI = async () => {
         const products = await getAllProductsAPI();
         setItems(products.data);
-        toast(`History updated: items length ${items.length}`);
     }
 
     useEffect(() => {

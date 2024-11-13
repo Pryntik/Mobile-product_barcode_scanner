@@ -78,31 +78,35 @@ const Popup = ({
 
     const addProduct = async () => {
         if (isValidProductStatus(productCard)) {
-            const productSave = getProductSaveFromCard({
+            const pSave = await getProductSaveFromCard({
                 ...productCard,
                 price: cardPrice,
                 quantity: cardQuantity,
             });
-            await addProductDB(await productSave);
+            await addProductDB(pSave);
         }
-        else {
-            toast('Product not valid');
-        }
+        else toast('Product not valid');
     };
 
     const addManualProduct = async () => {
-        const producCard = getProductSaveFromCard({
+        const pSave = await getProductSaveFromCard({
             ...productCard,
             name: formName,
             price: formPrice,
         });
-        await addProductDB(await producCard);
+        if (formName !== '' && formPrice !== 0) {
+            await addProductDB(pSave);
+            setFormName('');
+            setFormPrice(0);
+            closePopup();
+        }
+        else toast('Product not valid');
     };
 
     const popupViewMode = () => {
         if (data.type === 'card') {
             return (
-                <View>                
+                <View style={style?.view}>                
                     <CardProduct
                         product={productCard}
                         getCardPrice={(price) => setCardPrice(price)}
@@ -154,7 +158,6 @@ const Popup = ({
     }, [dataItem]);
 
     useEffect(() => {
-        toast(isVisible);
         if (isVisible === true) openPopup();
         else closePopup();
     }, [isVisible]);

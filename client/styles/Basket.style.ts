@@ -19,6 +19,8 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'white',
         borderWidth: 2,
         borderColor: '#f0f0f0',
+        position: 'absolute',
+        bottom: 0,
     },
     empty_view: {
         display: 'flex',
@@ -37,15 +39,15 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'transparent',
         color: '#a9a9a9',
     },
-    button_view: {
+    tabButton_view: {
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         height: 100,
     },
-    button_button: {
+    tabButton_button: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -54,10 +56,10 @@ export const basketStyle = StyleSheet.create({
         height: 40,
         borderRadius: 10,
     },
-    button_text: {
+    tabButton_text: {
         fontSize: 12,
     },
-    button_image: {
+    tabButton_image: {
         width: 20,
         height: 20,
     },

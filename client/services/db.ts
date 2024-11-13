@@ -36,6 +36,7 @@ export const getProductDB = (id: number): Promise<Nullable<ProductSaveType>> => 
             resolve(select);
         } catch (error) {
             console.error(`Error fetching product with id ${id}:`, error);
+            await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
     });
@@ -67,8 +68,8 @@ export const getAllProductsDB = (): Promise<ProductSaveType[]> => {
 export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { id, name, price, quantity } = newProduct;
             await panier_db.runAsync('BEGIN TRANSACTION;');
+            const { id, name, price, quantity } = newProduct;
             const select = await panier_db.getFirstAsync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
 
             if (select) {
@@ -95,10 +96,13 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
 export const deleteProductDB = (id: number): Promise<void> => {
     return new Promise(async (resolve, reject) => {
         try {
+            await panier_db.runAsync('BEGIN TRANSACTION;');
             await panier_db.runAsync('DELETE FROM Products WHERE id = ?;', id);
+            await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
             console.error(`Error deleting product with id ${id}:`, error);
+            await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
     });
@@ -108,10 +112,13 @@ export const deleteProductDB = (id: number): Promise<void> => {
 export const deleteAllProductsDB = (): Promise<void> => {
     return new Promise(async (resolve, reject) => {
         try {
-            await panier_db.runAsync('TRUNCATE TABLE Products;');
+            await panier_db.runAsync('BEGIN TRANSACTION;');
+            await panier_db.runAsync('DELETE FROM Products;');
+            await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
             console.error('Error deleting all products:', error);
+            await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
     });

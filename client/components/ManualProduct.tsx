@@ -25,10 +25,10 @@ const ManualProduct = ({getClick, setClick}: ManualProductType) => {
     return ( 
         <ImageButton
         style={{
-            view: basketStyle.button_view,
-            button: basketStyle.button_button,
-            text: basketStyle.button_text,
-            image: basketStyle.button_image,
+            view: basketStyle.tabButton_view,
+            button: basketStyle.tabButton_button,
+            text: basketStyle.tabButton_text,
+            image: basketStyle.tabButton_image,
         }}
         colorButton={{backgroundColor: 'lightgreen', clickColor: '#f0f0f0'}}
         text="Add manually"
