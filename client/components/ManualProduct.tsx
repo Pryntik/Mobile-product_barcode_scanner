@@ -25,7 +25,6 @@ const ManualProduct = ({getClick, setClick}: ManualProductType) => {
     return ( 
         <ImageButton
         style={{
-            view: basketStyle.tabButton_view,
             button: basketStyle.tabButton_button,
             text: basketStyle.tabButton_text,
             image: basketStyle.tabButton_image,

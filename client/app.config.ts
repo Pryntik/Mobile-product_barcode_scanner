@@ -5,6 +5,5 @@ module.exports = {
       apiUrl: process.env.API_URL,
       stripePK: process.env.STRIPE_PK
     },
-    jsEngine: "hermes"
   };
   

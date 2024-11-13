@@ -82,7 +82,6 @@ const Checkout = () => {
         <StripeProvider publishableKey={`${process.env.STRIPE_PK}`} merchantIdentifier="univ.com.barcodescanner">
             <ImageButton
                 style={{
-                    view: basketStyle.tabButton_view,
                     button: basketStyle.tabButton_button,
                     text: basketStyle.tabButton_text,
                     image: basketStyle.tabButton_image,

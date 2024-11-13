@@ -39,14 +39,6 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'transparent',
         color: '#a9a9a9',
     },
-    tabButton_view: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: 100,
-    },
     tabButton_button: {
         display: 'flex',
         flexDirection: 'row',

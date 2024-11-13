@@ -21,9 +21,7 @@ const Basket = () => {
     const getCardProducts = () => cardProducts.map(cardProduct => cardProduct);
 
     const popupIsClose = (isClose: boolean) => {
-        if (isClose === true) {
-            setShowManualProduct(false);
-        }
+        if (isClose === true) setShowManualProduct(false);
     }
 
     const basketViewMode = () => {
@@ -47,7 +45,7 @@ const Basket = () => {
             <View style={basketStyle.empty_view}>
                 <ImageButton
                     src={emptyBasketIcon}
-                    onClick={majDB}
+                    onClick={updateDB}
                     style={{image: basketStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={basketStyle.empty_text}>Empty</Text>
@@ -60,34 +58,34 @@ const Basket = () => {
         );
     }
 
-    const majDB = async () => {
+    const updateCardProducts = async () => {
+        const products = await getAllProductsDB();
+        const updatedCardProducts: ReactElement[] = [];
+
+        for (const product of products) {
+            const productCard = await getProductCard(product);
+            if (isValidProductStatus(productCard)) {
+                updatedCardProducts.push(
+                    <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
+                );
+            }
+        }
+        setItems(products);
+        setCardProducts(updatedCardProducts);
+    };
+
+    const updateDB = async () => {
         const products = await getAllProductsDB();
         setItems(products);
     }
   
     useEffect(() => {
-        const updateCardProducts = async () => {
-            const products = await getAllProductsDB();
-            const updatedCardProducts: ReactElement[] = [];
-
-            for (const product of products) {
-                const productCard = await getProductCard(product);
-                if (isValidProductStatus(productCard)) {
-                    updatedCardProducts.push(
-                        <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
-                    );
-                }
-            }
-            setItems(products);
-            setCardProducts(updatedCardProducts);
-        };
-
         updateCardProducts();
     }, [items]);
 
     useFocusEffect(
         useCallback(() => {
-            majDB();
+            updateDB();
         }, [])
     );
 

@@ -7,7 +7,6 @@ const panier_db = openDatabaseSync('Basket.db');
 // Fonction pour créer les tables du panier si elle n'existe pas
 export const createTables = (): Promise<void> => {
     const ProductsQuery = `
-        DROP TABLE IF EXISTS Products;
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
