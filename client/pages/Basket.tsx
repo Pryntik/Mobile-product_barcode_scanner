@@ -5,20 +5,36 @@ import ImageButton from "../components/ImageButton";
 import EmptyBasket from "../components/EmptyBasket";
 import ManualProduct from "../components/ManualProduct";
 import Popup from "../components/Popup";
-import React, { useState, ReactElement, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
-import { ProductSaveType } from "../types/TItem";
+import { ProductCardType, ProductSaveType } from "../types/TItem";
 import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
 import { getProductCard, isValidProductStatus } from "../utils/item.util";
 import { useFocusEffect } from '@react-navigation/native';
+import { toast } from "../utils/log.util";
 
 const Basket = () => {
     const [items, setItems] = useState<ProductSaveType[]>([]);
-    const [cardProducts, setCardProducts] = useState<ReactElement[]>([]);
+    const [cardProducts, setCardProducts] = useState<ProductCardType[]>([]);
     const [showManualProduct, setShowManualProduct] = useState(false);
 
-    const getCardProducts = () => cardProducts.map(cardProduct => cardProduct);
+    const updateProductQuantity = (index: number, quantity: number) => {
+        const updatedCardProducts = [...cardProducts];
+        updatedCardProducts[index].quantity = quantity;
+        setCardProducts(updatedCardProducts);
+    };
+
+    const getCardProducts = () => cardProducts.map((cardProduct, i) => {
+        return (
+            <CardProduct
+                key={cardProduct.id}
+                product={cardProduct}
+                style={basketStyle.card}
+                getCardQuantity={(quantity) => updateProductQuantity(i, quantity)}
+            />
+        );
+    });
 
     const popupIsClose = (isClose: boolean) => {
         if (isClose === true) setShowManualProduct(false);
@@ -60,18 +76,16 @@ const Basket = () => {
 
     const updateCardProducts = async () => {
         const products = await getAllProductsDB();
-        const updatedCardProducts: ReactElement[] = [];
+        const updatedCardProducts = new Set<ProductCardType>();
 
         for (const product of products) {
             const productCard = await getProductCard(product);
             if (isValidProductStatus(productCard)) {
-                updatedCardProducts.push(
-                    <CardProduct key={product.id} product={productCard} style={{ marginTop: 20 }} />
-                );
+                updatedCardProducts.add(productCard);
             }
-        }
+        };
         setItems(products);
-        setCardProducts(updatedCardProducts);
+        setCardProducts(Array.from(updatedCardProducts));
     };
 
     const updateDB = async () => {

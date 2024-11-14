@@ -34,7 +34,7 @@ const ImageButton = ({
     text,
     alt,
     src,
-   style,    
+    style,
     colorButton = {
         color: 'black',
         backgroundColor: 'white',

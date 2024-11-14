@@ -11,63 +11,63 @@ type CardModeType = 'popup' | 'basket' | 'history';
 
 type CardProductType = {
     product: ProductCardType,
-    mode?: CardModeType,
-    style?: StyleProp<ViewStyle>,
     getCardPrice?: (price: number) => void,
     getCardQuantity?: (quantity: number) => void,
+    mode?: CardModeType,
+    style?: StyleProp<ViewStyle>,
 }
 
 const CardProduct = ({
     product,
+    getCardPrice,
+    getCardQuantity,
     mode = 'popup',
     style = {
         position: 'static',
     },
-    getCardPrice,
-    getCardQuantity,
 }: CardProductType) => {
     const [cardQuantity, setCardQuantity] = useState(getProductQuantity(product));
     const [cardPrice, setCardPrice] = useState(cardQuantity * getProductPrice(product));
 
     const changeQuantity = (value: number | string) => {
-        setCardQuantity(parseInt(parseQuantity(cardQuantity, value)));
+        const newQuantity = parseInt(parseQuantity(cardQuantity, value));
+        setCardQuantity(newQuantity);
+        getCardQuantity && getCardQuantity(newQuantity);
     }
 
+    const upQuantity = () => changeQuantity(1);
+    const downQuantity = () => changeQuantity(-1);
+
     const CardProductViewMode = () => {
-        if (mode === 'basket' && cardQuantity <= 0) {
-            return <></>
-        }
-        else {
-            return (
-                <View style={[cardStyle.container, style]}>
-                    <View style={cardStyle.data}>
-                        <Image style={cardStyle.icon} source={getProductIcon(product)}/>
-                        <Text style={cardStyle.title}>{product.name}</Text>
-                        <View style={cardStyle.otherData}>
-                            <View style={cardStyle.otherDataTop}>
-                                <Text style={cardStyle.content}>{parsePrice(cardPrice, '€')}</Text>
-                                <Image style={cardStyle.status} source={product.statusIcon}/>
-                            </View>
-                            <View style={cardStyle.otherDataBottom}>
-                                <ImageButton
-                                    style={{image: cardStyle.buttonQuantity}}
-                                    src={lessIcon} onClick={() => changeQuantity(-1)}
-                                    disableDefaultStyle/>
-                                <TextInput
-                                    style={cardStyle.content}
-                                    keyboardType="numeric"
-                                    value={cardQuantity.toString()}
-                                    onChangeText={text => changeQuantity(text)}/>
-                                <ImageButton
-                                    style={{image: cardStyle.buttonQuantity}}
-                                    src={moreIcon} onClick={() => changeQuantity(1)}
-                                    disableDefaultStyle/>
-                            </View>
+        return (
+            <View style={[cardStyle.container, style]}>
+                <View style={cardStyle.data}>
+                    <Image style={cardStyle.icon} source={getProductIcon(product)}/>
+                    <Text style={cardStyle.title}>{product.name}</Text>
+                    <View style={cardStyle.otherData}>
+                        <View style={cardStyle.otherDataTop}>
+                            <Text style={cardStyle.content}>{parsePrice(cardPrice, '€')}</Text>
+                            <Image style={cardStyle.status} source={product.statusIcon}/>
+                        </View>
+                        <View style={cardStyle.otherDataBottom}>
+                            <ImageButton
+                                style={{image: cardStyle.buttonQuantity}}
+                                src={lessIcon} onClick={downQuantity}
+                                disableDefaultStyle/>
+                            <TextInput
+                                style={cardStyle.content}
+                                keyboardType="numeric"
+                                value={cardQuantity.toString()}
+                                onChangeText={text => changeQuantity(text)}/>
+                            <ImageButton
+                                style={{image: cardStyle.buttonQuantity}}
+                                src={moreIcon} onClick={upQuantity}
+                                disableDefaultStyle/>
                         </View>
                     </View>
                 </View>
-            );
-        }
+            </View>
+        );
     }
 
     useEffect(() => {
@@ -84,9 +84,7 @@ const CardProduct = ({
         getCardPrice && getCardPrice(cardPrice);
     }, [cardQuantity, cardPrice]);
 
-    return (
-        <CardProductViewMode/>
-    )
+    return <CardProductViewMode/>
 }
 
 export default CardProduct;

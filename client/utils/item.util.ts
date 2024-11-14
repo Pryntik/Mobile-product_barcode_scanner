@@ -2,7 +2,7 @@ import checkIcon from "../assets/img/check.png";
 import unknownIcon from "../assets/img/unknown.png";
 import crossIcon from "../assets/img/cross.png";
 import pUnknown from "../assets/product/p_unknown.png";
-import { AllProductType, MaybeProductType, Nullable, productCardDefault, ProductCardType, ProductExtendType, ProductSaveType, ProductType, validProducts } from "../types/TItem";
+import { AllProductType, Maybe, MaybeProductType, Nullable, productCardDefault, ProductCardType, ProductExtendType, ProductSaveType, ProductType, validProducts } from "../types/TItem";
 import { ImageSourcePropType } from "react-native";
 import { getAllProductsDB } from "../services/db";
 
@@ -99,6 +99,11 @@ export async function getProductId(): Promise<number> {
 export function getProductName(item: AllProductType): string {
     const product = item as ProductType;
     return product && product.name ? product.name : 'Product unknown';
+}
+
+export async function getProductIdByName(name: string): Promise<Maybe<number>> {
+    const products = await getAllProductsDB();
+    return products.find(p => p.name === name)?.id;
 }
 
 export function getProductPrice(item: AllProductType): number {

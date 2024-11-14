@@ -39,6 +39,9 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'transparent',
         color: '#a9a9a9',
     },
+    card: {
+        marginTop: 20,
+    },
     tabButton_button: {
         display: 'flex',
         flexDirection: 'row',

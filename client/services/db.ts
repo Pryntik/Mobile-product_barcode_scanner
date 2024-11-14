@@ -1,13 +1,13 @@
 import { openDatabaseSync } from 'expo-sqlite';
 import { SelectType } from '../types/TSQL';
-import { Nullable, ProductSaveType } from '../types/TItem';
+import { Maybe, Nullable, ProductSaveType } from '../types/TItem';
 
 const panier_db = openDatabaseSync('Basket.db');
 
 // Fonction pour créer les tables du panier si elle n'existe pas
 export const createTables = (): Promise<void> => {
     const ProductsQuery = `
-        CREATE TABLE IF NOT EXISTS products (
+        CREATE TABLE IF NOT EXISTS Products (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             price REAL NOT NULL,
@@ -23,6 +23,11 @@ export const createTables = (): Promise<void> => {
         }
     });
 };
+
+async function getProductIdByName(name: string): Promise<Maybe<number>> {
+    const products = await getAllProductsDB();
+    return products.find(p => p.name === name)?.id;
+}
 
 // Obtenir un produit du panier
 export const getProductDB = (id: number): Promise<Nullable<ProductSaveType>> => {
@@ -69,11 +74,13 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
         try {
             await panier_db.runAsync('BEGIN TRANSACTION;');
             const { id, name, price, quantity } = newProduct;
-            const select = await panier_db.getFirstAsync('SELECT * FROM Products WHERE id = ?;', id) as SelectType<ProductSaveType>;
+            const searchId = await getProductIdByName(name);
+            const select = await panier_db.getFirstAsync('SELECT * FROM Products WHERE id = ?;', searchId || id) as SelectType<ProductSaveType>;
 
-            if (select) {
+            if (select && searchId) {
                 const newQuantity = select.quantity + quantity;
-                await panier_db.runAsync('UPDATE Products SET quantity = ? WHERE id = ?;', newQuantity, id);
+                const newPrice = select.price * newQuantity;
+                await panier_db.runAsync('UPDATE Products SET quantity = ?, price = ? WHERE id = ?;', newQuantity, newPrice, searchId);
             }
             else {
                 await panier_db.runAsync('INSERT INTO Products (id, name, price, quantity) VALUES (?, ?, ?, ?);',
