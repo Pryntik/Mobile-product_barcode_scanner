@@ -5,63 +5,84 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, TextInput, StyleProp, ViewStyle } from "react-native";
 import { ProductCardType } from "../types/TItem";
 import { cardStyle } from "../styles/Card.style";
-import { getProductIcon, getProductPrice, getProductQuantity, parsePrice, parseQuantity } from "../utils/item.util";
+import { getProductIcon, getProductPriceFromQuantity, getProductQuantity, getProductSaveFromCard, parsePrice, parseQuantity } from "../utils/item.util";
+import { addInitialProductDB, deleteProductDB, updateProductDB } from "../services/db";
 
 type CardModeType = 'popup' | 'basket' | 'history';
 
 type CardProductType = {
     product: ProductCardType,
-    getCardPrice?: (price: number) => void,
-    getCardQuantity?: (quantity: number) => void,
+    getCardProduct?(cardProduct: ProductCardType): void,
     mode?: CardModeType,
     style?: StyleProp<ViewStyle>,
 }
 
 const CardProduct = ({
-    product,
-    getCardPrice,
-    getCardQuantity,
     mode = 'popup',
-    style = {
-        position: 'static',
-    },
+    product,
+    getCardProduct,
+    style,
 }: CardProductType) => {
-    const [cardQuantity, setCardQuantity] = useState(getProductQuantity(product));
-    const [cardPrice, setCardPrice] = useState(cardQuantity * getProductPrice(product));
+    const [cardProduct, setCardProduct] = useState(product);
+    const [productIsDelete, setProductIsDelete] = useState(false);
 
-    const changeQuantity = (value: number | string) => {
-        const newQuantity = parseInt(parseQuantity(cardQuantity, value));
-        setCardQuantity(newQuantity);
-        getCardQuantity && getCardQuantity(newQuantity);
+    const changeQuantity = async (value: number | string) => {
+        const newQuantity = parseInt(parseQuantity(cardProduct.quantity, value, mode === 'popup'));
+        const newPrice = await getProductPriceFromQuantity(cardProduct, newQuantity, mode === 'popup');
+    
+        const updateCardProduct = {
+            ...cardProduct,
+            price: newPrice,
+            quantity: newQuantity,
+        };
+        setCardProduct(updateCardProduct);
+        getCardProduct && getCardProduct(updateCardProduct);
+
+        if (mode === 'basket') {
+            const updateSaveProduct = await getProductSaveFromCard(updateCardProduct);
+            if (updateSaveProduct.quantity <= 0) {
+                await deleteProductDB(updateSaveProduct.id);
+                setProductIsDelete(true);
+            }
+            else {
+                await updateProductDB(updateSaveProduct);
+                setProductIsDelete(false);
+            }
+        }
     }
 
     const upQuantity = () => changeQuantity(1);
     const downQuantity = () => changeQuantity(-1);
 
     const CardProductViewMode = () => {
+        if (productIsDelete) return <></>;
         return (
             <View style={[cardStyle.container, style]}>
                 <View style={cardStyle.data}>
-                    <Image style={cardStyle.icon} source={getProductIcon(product)}/>
-                    <Text style={cardStyle.title}>{product.name}</Text>
+                    <View style={cardStyle.firstData}>
+                        <Image style={cardStyle.icon} source={getProductIcon(cardProduct)}/>
+                        <Text style={cardStyle.title}>{cardProduct.name}</Text>
+                    </View>
                     <View style={cardStyle.otherData}>
                         <View style={cardStyle.otherDataTop}>
-                            <Text style={cardStyle.content}>{parsePrice(cardPrice, '€')}</Text>
-                            <Image style={cardStyle.status} source={product.statusIcon}/>
+                            <Text style={cardStyle.content}>{parsePrice(cardProduct.price, '€')}</Text>
+                            <Image style={cardStyle.status} source={cardProduct.statusIcon}/>
                         </View>
                         <View style={cardStyle.otherDataBottom}>
                             <ImageButton
                                 style={{image: cardStyle.buttonQuantity}}
-                                src={lessIcon} onClick={downQuantity}
+                                src={lessIcon}
+                                onClick={downQuantity}
                                 disableDefaultStyle/>
                             <TextInput
                                 style={cardStyle.content}
                                 keyboardType="numeric"
-                                value={cardQuantity.toString()}
+                                value={getProductQuantity(cardProduct, mode === 'popup').toString()}
                                 onChangeText={text => changeQuantity(text)}/>
                             <ImageButton
                                 style={{image: cardStyle.buttonQuantity}}
-                                src={moreIcon} onClick={upQuantity}
+                                src={moreIcon}
+                                onClick={upQuantity}
                                 disableDefaultStyle/>
                         </View>
                     </View>
@@ -70,21 +91,18 @@ const CardProduct = ({
         );
     }
 
+    const updateInitialProduct = async () => {
+        const { name, price } = product;
+        if (name && price) await addInitialProductDB({name, price}, false);
+    }
+
     useEffect(() => {
-        setCardQuantity(getProductQuantity(product));
-        setCardPrice(getProductPrice(product));
+        updateInitialProduct();
+        setCardProduct(product);
+        getCardProduct && getCardProduct(product);
     }, [product]);
 
-    useEffect(() => {
-        setCardPrice(cardQuantity * getProductPrice(product));
-    }, [cardQuantity]);
-
-    useEffect(() => {
-        getCardQuantity && getCardQuantity(cardQuantity);
-        getCardPrice && getCardPrice(cardPrice);
-    }, [cardQuantity, cardPrice]);
-
-    return <CardProductViewMode/>
+    return <CardProductViewMode />
 }
 
 export default CardProduct;

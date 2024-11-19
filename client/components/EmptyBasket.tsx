@@ -1,13 +1,24 @@
 import emptyBasketIcon from '../assets/img/basket_empty.png'
 import ImageButton from "./ImageButton";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { basketStyle } from "../styles/Basket.style";
 import { deleteAllProductsDB } from '../services/db';
 
-const EmptyBasket = () => {
+type EmptyBasketType = {
+    getClick?(isClick: boolean): void,
+    setClick?: boolean,
+};
+
+const EmptyBasket = ({getClick, setClick}: EmptyBasketType) => {
+
     const deleteProductsFromBasket = async () => {
-        await deleteAllProductsDB()
+        getClick && getClick(true);
+        await deleteAllProductsDB();
     }
+
+    useEffect(() => {
+        if (getClick !== undefined && setClick !== undefined) getClick(setClick);
+    }, [setClick]);
 
     return (
         <ImageButton

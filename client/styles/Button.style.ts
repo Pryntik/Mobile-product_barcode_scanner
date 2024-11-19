@@ -17,6 +17,7 @@ export const buttonStyle = StyleSheet.create({
     imageButton_text: {
         marginLeft: 10,
         marginRight: 10,
+        lineHeight: 15,
     },    
     imageButton_image: {
         width: 25,

@@ -2,9 +2,9 @@ import checkIcon from "../assets/img/check.png";
 import unknownIcon from "../assets/img/unknown.png";
 import crossIcon from "../assets/img/cross.png";
 import pUnknown from "../assets/product/p_unknown.png";
-import { AllProductType, Maybe, MaybeProductType, Nullable, productCardDefault, ProductCardType, ProductExtendType, ProductSaveType, ProductType, validProducts } from "../types/TItem";
+import { AllProductType, MaybeType, MaybeProductType, NullableType, ProductCardType, ProductExtendType, ProductSaveType, ProductType, ValidProducts, ProductCardUnknown } from "../types/TItem";
 import { ImageSourcePropType } from "react-native";
-import { getAllProductsDB } from "../services/db";
+import { getAllProductsDB, getInitialProductDB } from "../services/db";
 
 /* GET */
 
@@ -13,7 +13,7 @@ import { getAllProductsDB } from "../services/db";
  * @param item - The item to retrieve the ProductType from.
  * @returns The ProductType if the item is valid, null otherwise.
  */
-export function getProduct(item: MaybeProductType): Nullable<ProductType> {
+export function getProduct(item: MaybeProductType): NullableType<ProductType> {
     if (typeof item === 'string' && isProduct(item)) {
         return parseProduct(item);
     }
@@ -28,39 +28,42 @@ export function getProduct(item: MaybeProductType): Nullable<ProductType> {
  * @param item - The item to retrieve the ProductSaveType from.
  * @returns The ProductSaveType if the item is valid, null otherwise.
  */
-export async function getProductSave(item: MaybeProductType): Promise<Nullable<ProductSaveType>> {
+export async function getProductSave(item: MaybeProductType, priceIsLock?: boolean, quantityIsLock?: boolean): Promise<NullableType<ProductSaveType>> {
     const product = getProduct(item);
     if (product) {
-        const id = await getProductId();
+        const id = await getProductId(product.name);
+        const price = await getProductPrice(product, priceIsLock);
         return {
             id: id,
             name: getProductName(product),
-            price: getProductPrice(product),
-            quantity: getProductQuantity(product),
+            price: price,
+            quantity: getProductQuantity(product, quantityIsLock),
         };
     }
     return null;
 }
 
-export async function getProductSaveFromCard(item: ProductCardType): Promise<ProductSaveType> {
-    const id = await getProductId();
+export async function getProductSaveFromCard(product: ProductCardType, priceIsLock?: boolean, quantityIsLock?: boolean): Promise<ProductSaveType> {
+    const id = await getProductId(product.name);
+    const price = await getProductPrice(product, priceIsLock);
     return {
-        id: item.id || id,
-        name: getProductName(item),
-        price: getProductPrice(item),
-        quantity: getProductQuantity(item),
+        id: id,
+        name: getProductName(product),
+        price: price,
+        quantity: getProductQuantity(product, quantityIsLock),
     };
 }
 
-export async function getProductCardFromSave(item: ProductSaveType): Promise<ProductCardType> {
-    const id = await getProductId();
+export async function getProductCardFromSave(product: ProductSaveType, priceIsLock?: boolean, quantityIsLock?: boolean): Promise<ProductCardType> {
+    const id = await getProductId(product.name);
+    const price = await getProductPrice(product, priceIsLock);
     return {
-        id: item.id || id,
-        name: getProductName(item),
-        price: getProductPrice(item),
-        quantity: getProductQuantity(item),
-        icon: getProductIcon(item),
-        statusIcon: getProductIconStatus(item),
+        id: id,
+        name: getProductName(product),
+        price: price,
+        quantity: getProductQuantity(product, quantityIsLock),
+        icon: getProductIcon(product),
+        statusIcon: getProductIconStatus(product),
     };
 }
 
@@ -69,20 +72,21 @@ export async function getProductCardFromSave(item: ProductSaveType): Promise<Pro
  * @param {MaybeProductType} item - The item which may or may not be a complete product.
  * @returns {ProductCardType} An object containing the product card details.
  */
-export async function getProductCard(item: MaybeProductType): Promise<ProductCardType> {
+export async function getProductCard(item: MaybeProductType, priceIsLock?: boolean, quantityIsLock?: boolean): Promise<ProductCardType> {
     const product = getProduct(item);
     if (product) {
-        const id = await getProductId();
+        const id = await getProductId(product.name);
+        const price = await getProductPrice(product, priceIsLock);
         return {
             id: id,
             name: getProductName(product),
-            price: getProductPrice(product),
-            quantity: getProductQuantity(product),
+            price: price,
+            quantity: getProductQuantity(product, quantityIsLock),
             icon: getProductIcon(product),
             statusIcon: getProductIconStatus(product),
         };
     }
-    return productCardDefault;
+    return ProductCardUnknown;
 }
 
 /** Retrieves a ProductCardType from the given item.
@@ -90,30 +94,49 @@ export async function getProductCard(item: MaybeProductType): Promise<ProductCar
  * @param item - The item to retrieve the ProductCardType from.
  * @returns The ProductCardType if the item is valid, null otherwise.
  */
-export async function getProductId(): Promise<number> {
+export async function getProductId(productName?: MaybeType<string>): Promise<number> {
+    if (productName) {
+        const id = await getProductIdByName(productName);
+        if (id) return id;
+    }
     const products = await getAllProductsDB();
     if (products.length === 0) return 1;
     return products.length + 1;
 }
 
-export function getProductName(item: AllProductType): string {
-    const product = item as ProductType;
+export function getProductName(product: AllProductType): string {
     return product && product.name ? product.name : 'Product unknown';
 }
 
-export async function getProductIdByName(name: string): Promise<Maybe<number>> {
+export async function getProductIdByName(name: string): Promise<MaybeType<number>> {
     const products = await getAllProductsDB();
     return products.find(p => p.name === name)?.id;
 }
 
-export function getProductPrice(item: AllProductType): number {
-    const product = item as ProductType;
+export async function getProductPrice(product: AllProductType, priceIsLock?: boolean): Promise<number> {
+    if (priceIsLock) {
+        const initialProduct = await getInitialProductDB(getProductName(product));
+        return product && product.price ? product.price : initialProduct ? initialProduct.price : 0;
+    }
     return product && product.price ? product.price : 0;
 }
 
-export function getProductQuantity(item: AllProductType): number {
-    const product = item as ProductExtendType;
-    return product && product.quantity ? product.quantity : 1;
+export async function getProductPriceFromQuantity(product: AllProductType, quantity: number, priceIsLock?: boolean): Promise<number> {
+    const initialProduct = await getInitialProductDB(getProductName(product));
+    if (initialProduct && initialProduct.price) {
+        if (priceIsLock && quantity <= 0) return initialProduct.price;
+        return initialProduct.price * quantity;
+    }
+    return 0;
+}
+
+export function getProductQuantity(product: AllProductType, quantityIsLock?: boolean): number {
+    if (product && 'quantity' in product && product && product.quantity !== null && product.quantity !== undefined) {
+        if (!quantityIsLock && product.quantity <= 0) return 0;
+        else if (quantityIsLock && product.quantity <= 0) return 1;
+        return product.quantity;
+    }
+    return 1;
 }
 
 /** Sets the new quantity of the given quantity.
@@ -122,14 +145,18 @@ export function getProductQuantity(item: AllProductType): number {
  * @param quantityAdd - The value to add.
  * @returns The new quantity.
  */
-export function getNewQuantity(quantity: number, quantityAdd: number): number {
-    const som: number = quantity + quantityAdd;
-    const result: number = som < 0 ? 0 : som > 9999 ? 9999 : som;
+export function getNewQuantity(quantity: NullableType<number>, quantityAdd: NullableType<number>, quantityIsLock?: boolean): number {
+    const min = quantityIsLock ? 1 : 0;
+    const max = 9999;
+    const v_quantity = quantity || 0;
+    const v_quantityAdd = quantityAdd || 0;
+    const som: number = v_quantity + v_quantityAdd;
+    const result: number = som <= min ? min : som > max ? max : som;
     return result;
 }
 
 export function getProductIcon(item: MaybeProductType): ImageSourcePropType {
-    const product = validProducts.find(p => p.name === (item as ProductType).name);
+    const product = ValidProducts.find(p => p.name === (item as ProductType).name);
     return product && product.icon ? product.icon : pUnknown;
 }
 
@@ -151,8 +178,8 @@ export function getProductIconStatus(item: MaybeProductType): ImageSourcePropTyp
     return crossIcon;
 }
 
-export function getProductValidIconStatus(item: ProductCardType): ImageSourcePropType {
-    if (item.statusIcon === crossIcon) {
+export function getProductValidIconStatus(product: ProductCardType): ImageSourcePropType {
+    if (product.statusIcon === crossIcon) {
         return crossIcon;
     }
     return checkIcon;
@@ -223,7 +250,14 @@ export function isProduct(item: MaybeProductType): boolean {
  * @returns True if the item is a valid ProductType, false otherwise.
  */
 export function isValidProduct(item: MaybeProductType): boolean {
-    return isProduct(item) && validProducts.some(p => p.name === (item as ProductType).name);
+    return isProduct(item) && ValidProducts.some(p => p.name === (item as ProductType).name);
+}
+
+export function isValidProductSave(product: ProductExtendType): boolean {
+    return typeof product.id === 'number' &&
+    typeof product.name === 'string' && product.name !== 'Product unknown' &&
+    typeof product.price === 'number' &&
+    typeof product.quantity === 'number'
 }
 
 /** Checks if the given item is a ProductType and if its name matches the given name.
@@ -234,13 +268,22 @@ export function isValidProduct(item: MaybeProductType): boolean {
  */
 export function isNameProduct(item: MaybeProductType, nameSearch: string): boolean {
     if (item && isProduct(item)) {
-        return (item as ProductType).name.toLowerCase() === nameSearch.toLowerCase();
+        const product = item as ProductType;
+        return product.name.toLowerCase() === nameSearch.toLowerCase();
     }
     return false;
 }
 
 export function isValidProductStatus(item: ProductCardType): boolean {
     return item.statusIcon === checkIcon || item.statusIcon === unknownIcon;
+}
+
+export function isValidProductToSave(item: ProductExtendType): boolean {
+    if ("icon" in item && "statusIcon" in item) {
+        const cardProduct = item as ProductCardType;
+        return isValidProductSave(cardProduct) && isValidProductStatus(cardProduct);
+    }
+    return isValidProductSave(item);
 }
 
 /* STRING */
@@ -254,7 +297,7 @@ export function isValidProductStatus(item: ProductCardType): boolean {
  * @example JSON.parse('{"name": "Banane", "price": 199,}') returns null
  *                                                     ^
  */
-export function parseProduct(item: MaybeProductType): Nullable<ProductType> {
+export function parseProduct(item: MaybeProductType): NullableType<ProductType> {
     if (item && typeof item === 'string') {
         try {
             const objectItem = JSON.parse(item);
@@ -287,7 +330,7 @@ export function stringifyProduct(product: MaybeProductType): string {
     return JSON.stringify(product).trim();
 }
 
-export function parsePrice(price: Nullable<number>, symbole: string): string {
+export function parsePrice(price: NullableType<number>, symbole: string): string {
     if (price) {
         if (price.toString().length === 1) return '0.0' + price + symbole;
         if (price.toString().length === 2) return '0.' + price + symbole;
@@ -298,12 +341,14 @@ export function parsePrice(price: Nullable<number>, symbole: string): string {
     return '0.00' + symbole;
 }
 
-export function parseQuantity(quantity: number, valueAdd: number | string): string {
-    if (typeof valueAdd === 'number') {
-        return getNewQuantity(quantity, valueAdd).toString();
+export function parseQuantity(quantity: NullableType<number>, valueAdd: NullableType<number | string>, quantityIsLock?: boolean): string {
+    const v_quantity = quantity || 0;
+    const v_valueAdd = valueAdd || 0;
+    if (typeof v_valueAdd === 'number') {
+        return getNewQuantity(v_quantity, v_valueAdd, quantityIsLock).toString();
     }
-    if (valueAdd.length === 0 || isNaN(parseInt(valueAdd))) {
+    if (v_valueAdd.length === 0 || isNaN(parseInt(v_valueAdd))) {
         return '0';
     }
-    return getNewQuantity(0, parseInt(valueAdd)).toString();
+    return getNewQuantity(0, parseInt(v_valueAdd), quantityIsLock).toString();
 }

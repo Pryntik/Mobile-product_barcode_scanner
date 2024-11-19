@@ -1,20 +1,25 @@
 import reverseCameraIcon from '../assets/img/reverse_camera.png';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cameraStyle } from "../styles/Camera.style";
 import { BarcodeScanningResult, CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { Button, Text, TouchableOpacity, View, Image } from 'react-native';
 
 type CameraLayoutType = {
-    getScanResult(scanResult: BarcodeScanningResult): void,
+    getScanResult(scanResult?: BarcodeScanningResult): void,
 }
 
 const CameraLayout = ({getScanResult}: CameraLayoutType) => {
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
+    const [scanResult, setScanResult] = useState<BarcodeScanningResult>();
 
     const reverseCamera = () =>  {
         setFacing(current => (current === 'back' ? 'front' : 'back'));
     }
+
+    useEffect(() => {
+        getScanResult(scanResult);
+    }, [scanResult]);
 
     const cameraViewMode = () => {
         if (permission && permission.granted === false) {
@@ -26,7 +31,7 @@ const CameraLayout = ({getScanResult}: CameraLayoutType) => {
             );
         }
         return (
-            <CameraView style={cameraStyle.camera} facing={facing} onBarcodeScanned={(scanResult) => getScanResult(scanResult)}>
+            <CameraView style={cameraStyle.camera} facing={facing} onBarcodeScanned={(scanResult) => setScanResult(scanResult)}>
                 <View style={cameraStyle.buttonContainer}>
                     <TouchableOpacity style={cameraStyle.button} onPress={reverseCamera}>
                         <Image style={cameraStyle.image} source={reverseCameraIcon}/>

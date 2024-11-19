@@ -1,3 +1,3 @@
-import { Nullable } from "./TItem";
+import { NullableType } from "./TItem";
 
-export type SelectType<T> = Nullable<T>
+export type SelectType<T> = NullableType<T>

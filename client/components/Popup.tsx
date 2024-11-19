@@ -5,9 +5,8 @@ import CardProduct from "./CardProduct";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleProp, TextInput, View, ViewStyle } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
-import { BarcodeScanningResult } from "expo-camera";
-import { getProductCard, getProductSaveFromCard, getProductValidIconStatus, isValidProductStatus } from "../utils/item.util";
-import { productCardDefault, ProductCardType } from "../types/TItem";
+import { getProductCard, getProductId, getProductSaveFromCard, getProductValidIconStatus, isValidProductToSave } from "../utils/item.util";
+import { ProductCardUnknown, ProductCardType, ProductCardDefault, ProductType, MaybeType } from "../types/TItem";
 import { addProductDB } from "../services/db";
 import { toast } from "../utils/log.util";
 import { basketStyle } from "../styles/Basket.style";
@@ -21,7 +20,7 @@ type PopupFormType = {
 
 type PopupDataType = {
     type: PopupDataModeType,
-    scanItem?: BarcodeScanningResult,
+    scanProduct?: MaybeType<ProductType>,
     form?: PopupFormType,
 }
 
@@ -47,11 +46,9 @@ const Popup = ({
     const slideAnim = useRef(new Animated.Value(ySize)).current;
     const popupStyle_view = [popupStyle.container, {transform: [{translateY: slideAnim}]}, style?.view];
     const closeStyle_button = [popupStyle.buttonClose_button, style?.closeButton]
-    const dataItem = data.scanItem;
     const [isShow, setIsShow] = useState(isVisible);
-    const [productCard, setProductCard] = useState<ProductCardType>(productCardDefault);
-    const [cardQuantity, setCardQuantity] = useState(productCard.quantity);
-    const [cardPrice, setCardPrice] = useState(productCard.price);
+    const [productCard, setProductCard] = useState<ProductCardType>(ProductCardUnknown);
+    const [newProductCard, setNewProductCard] = useState<ProductCardType>(ProductCardUnknown);
     const [formName, setFormName] = useState('');
     const [formPrice, setFormPrice] = useState(0);
 
@@ -77,27 +74,30 @@ const Popup = ({
     };
 
     const addProduct = async () => {
-        if (isValidProductStatus(productCard)) {
-            const pSave = await getProductSaveFromCard({
-                ...productCard,
-                price: cardPrice,
-                quantity: cardQuantity,
-            });
-            await addProductDB(pSave);
+        const productSave = await getProductSaveFromCard({
+            ...productCard,
+            price: newProductCard.price,
+            quantity: newProductCard.quantity,
+        });
+        if (isValidProductToSave(productSave)) {
+            await addProductDB(productSave);
         }
         else toast('Product not valid');
     };
 
     const addManualProduct = async () => {
-        const pSave = await getProductSaveFromCard({
-            ...productCard,
-            name: formName,
-            price: formPrice,
-        });
         if (formName !== '' && formPrice !== 0) {
-            await addProductDB(pSave);
+            const id = await getProductId();
+            const productSave = await getProductSaveFromCard({
+                ...ProductCardDefault,
+                id: id,
+                name: formName,
+                price: formPrice,
+            });
+            await addProductDB(productSave);
             setFormName('');
             setFormPrice(0);
+            await updateProductCard();
             closePopup();
         }
         else toast('Product not valid');
@@ -109,15 +109,21 @@ const Popup = ({
                 <View style={style?.view}>                
                     <CardProduct
                         product={productCard}
-                        getCardPrice={(price) => setCardPrice(price)}
-                        getCardQuantity={(quantity) => setCardQuantity(quantity)}
+                        getCardProduct={(cardProduct) => setNewProductCard(cardProduct)}
+                        mode='popup'
                         style={popupStyle.buttonCard}/>
                     <ImageButton
                         onClick={addProduct}
                         text="Add product"
                         src={getProductValidIconStatus(productCard)}
                         alt="Add product"
-                        style={{view: popupStyle.buttonSubmit_view}}/>
+                        style={{
+                            view: popupStyle.buttonSubmit_view,
+                            button: popupStyle.buttonSubmit_button,
+                            text: popupStyle.buttonSubmit_text,
+                            image: popupStyle.buttonSubmit_image,
+                        }}
+                        disableDefaultStyle/>
                 </View>
             );
         }
@@ -144,18 +150,20 @@ const Popup = ({
         };
     };
 
+    const updateProductCard = async () => {
+        const cardProduct = await getProductCard(data.scanProduct);
+        setProductCard(cardProduct);
+    }
+
+    useEffect(() => {
+        updateProductCard();
+    }, [data.scanProduct]);
+
     useEffect(() => {
         data.form?.getName(formName);
         data.form?.getPrice(formPrice);
     }, [formName, formPrice]);
 
-    useEffect(() => {
-        getProductCard(dataItem?.data).then(item => {
-            setProductCard(item);
-        }).catch(error => {
-            console.error('Error Popup useEffect[dataItem]:', error);
-        });
-    }, [dataItem]);
 
     useEffect(() => {
         if (isVisible === true) openPopup();

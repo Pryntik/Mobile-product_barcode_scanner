@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export const cardStyle = StyleSheet.create({
     container: {
+        position: 'static',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
@@ -29,6 +30,8 @@ export const cardStyle = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: 'bold',
+        lineHeight: 40,
+        height: 40,
         width: '50%',
         marginLeft: 5,
         marginRight: 5,
@@ -44,24 +47,34 @@ export const cardStyle = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
+    firstData: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        width: '70%',
+    },
     otherData: {
         display: 'flex',
         flexDirection: 'column',
-        width: '25%',
+        width: '20%',
+        marginRight: '10%',
     },
     otherDataTop: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 5,
+        lineHeight: 40,
+        height: 40,
     },
     otherDataBottom: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 5,
+        lineHeight: 40,
+        height: 40,
     },
     buttonQuantity: {
         width: 20,

@@ -1,16 +1,22 @@
 import walletIcon from "../assets/img/wallet.png";
 import ImageButton from "./ImageButton";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { Alert, ToastAndroid } from "react-native";
 import { basketStyle } from "../styles/Basket.style";
 import { apiUrl, userId } from "../services/api";
 import { getAllProductsDB } from "../services/db";
 
-const Checkout = () => {
-    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+type CheckoutType = {
+    getClick?(isClick: boolean): void,
+    setClick?: boolean,
+};
+
+const Checkout = ({getClick, setClick}: CheckoutType) => {
+    const [isClick, setIsClick] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [paymentIntentId, setPaymentIntentId] = useState<string>("");
+    const [paymentIntentId, setPaymentIntentId] = useState<string>('');
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     const fetchPaymentSheetParams = async () => {
         const products = await getAllProductsDB();
@@ -57,7 +63,6 @@ const Checkout = () => {
     };
 
     const openPaymentSheet = async () => {
-        await initializePaymentSheet();
         const { error } = await presentPaymentSheet();
 
         if (error) {
@@ -78,6 +83,24 @@ const Checkout = () => {
         }
     };
 
+    const clickCheckout = async () => {
+        await initializePaymentSheet();
+        await openPaymentSheet();
+        setIsClick(true);
+    }
+
+    useEffect(() => {
+        if (setClick && getClick) {
+            setIsClick(setClick)
+            getClick(setClick);
+        }
+    }, [setClick]);
+
+    useEffect(() => {
+        setIsClick(isClick)
+        getClick && getClick(isClick);
+    }, [isClick]);
+
     return (
         <StripeProvider publishableKey={`${process.env.STRIPE_PK}`} merchantIdentifier="univ.com.barcodescanner">
             <ImageButton
@@ -90,7 +113,7 @@ const Checkout = () => {
                 text="Checkout"
                 src={walletIcon}
                 alt="Checkout"
-                onClick={openPaymentSheet}
+                onClick={clickCheckout}
                 disableButton={loading}
                 disableDefaultStyle/>
         </StripeProvider>

@@ -7,52 +7,70 @@ import ManualProduct from "../components/ManualProduct";
 import Popup from "../components/Popup";
 import React, { useState, useCallback, useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
-import { ProductCardType, ProductSaveType } from "../types/TItem";
+import { ProductCardType } from "../types/TItem";
 import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
-import { getProductCard, isValidProductStatus } from "../utils/item.util";
+import { getProductCard, isValidProductToSave } from "../utils/item.util";
 import { useFocusEffect } from '@react-navigation/native';
-import { toast } from "../utils/log.util";
 
 const Basket = () => {
-    const [items, setItems] = useState<ProductSaveType[]>([]);
     const [cardProducts, setCardProducts] = useState<ProductCardType[]>([]);
-    const [showManualProduct, setShowManualProduct] = useState(false);
-
-    const updateProductQuantity = (index: number, quantity: number) => {
-        const updatedCardProducts = [...cardProducts];
-        updatedCardProducts[index].quantity = quantity;
-        setCardProducts(updatedCardProducts);
-    };
-
-    const getCardProducts = () => cardProducts.map((cardProduct, i) => {
-        return (
-            <CardProduct
-                key={cardProduct.id}
-                product={cardProduct}
-                style={basketStyle.card}
-                getCardQuantity={(quantity) => updateProductQuantity(i, quantity)}
-            />
-        );
-    });
-
+    const [basketIsEmpty, setBasketIsEmpty] = useState(true);
+    const [buttonEmptyBasketIsClick, setButtonEmptyBasketIsClick] = useState(false);
+    const [buttonCheckoutIsClick, setButtonCheckoutIsClick] = useState(false);
+    const [buttonManualIsClick, setButtonManualIsClick] = useState(false);
+    
     const popupIsClose = (isClose: boolean) => {
-        if (isClose === true) setShowManualProduct(false);
+        setButtonManualIsClick(!isClose);
+    }
+
+    const emptyButtonIsClick = async (isClick: boolean) => {
+        setButtonEmptyBasketIsClick(isClick);
+        await updateProducts();
+        setButtonEmptyBasketIsClick(false);
+    }
+
+    const checkoutButtonIsClick = async (isClick: boolean) => {
+        setButtonCheckoutIsClick(isClick);
+        await updateProducts();
+        setButtonCheckoutIsClick(false);
+    }
+
+    const manualButtonIsClick = async (isClick: boolean) => {
+        setButtonManualIsClick(isClick);
+        await updateProducts();
+    }
+
+    const getCardProducts = () => {
+        return cardProducts.map((cardProduct, i) => {
+            return (
+                <CardProduct
+                    key={i}
+                    product={cardProduct}
+                    mode='basket'
+                    style={basketStyle.card}
+                />
+            )}
+        );
     }
 
     const basketViewMode = () => {
-        if (cardProducts.length > 0) {
+        if (basketIsEmpty === false) {
             return (
                 <>
                     <ScrollView style={basketStyle.scroll_view}>
                         {getCardProducts()}
                     </ScrollView>
                     <View style={basketStyle.buttons_view}>
-                        <EmptyBasket/>
-                        <Checkout />
+                        <EmptyBasket
+                            getClick={emptyButtonIsClick}
+                            setClick={buttonEmptyBasketIsClick}/>
+                        <Checkout
+                            getClick={checkoutButtonIsClick}
+                            setClick={buttonCheckoutIsClick}/>
                         <ManualProduct
-                            getClick={(isClick) => setShowManualProduct(isClick)}
-                            setClick={showManualProduct}/>
+                            getClick={manualButtonIsClick}
+                            setClick={buttonManualIsClick}/>
                     </View>
                 </>
             );
@@ -61,45 +79,36 @@ const Basket = () => {
             <View style={basketStyle.empty_view}>
                 <ImageButton
                     src={emptyBasketIcon}
-                    onClick={updateDB}
+                    onClick={updateProducts}
                     style={{image: basketStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={basketStyle.empty_text}>Empty</Text>
                 <View style={basketStyle.buttons_view}>
                     <ManualProduct
-                        getClick={(isClick) => setShowManualProduct(isClick)}
-                        setClick={showManualProduct}/>
+                        getClick={manualButtonIsClick}
+                        setClick={buttonManualIsClick}/>
                 </View>
             </View>
         );
     }
 
-    const updateCardProducts = async () => {
+    const updateProducts = async () => {
         const products = await getAllProductsDB();
         const updatedCardProducts = new Set<ProductCardType>();
 
         for (const product of products) {
             const productCard = await getProductCard(product);
-            if (isValidProductStatus(productCard)) {
+            if (isValidProductToSave(productCard)) {
                 updatedCardProducts.add(productCard);
             }
         };
-        setItems(products);
         setCardProducts(Array.from(updatedCardProducts));
+        setBasketIsEmpty(products.length === 0);
     };
-
-    const updateDB = async () => {
-        const products = await getAllProductsDB();
-        setItems(products);
-    }
-  
-    useEffect(() => {
-        updateCardProducts();
-    }, [items]);
 
     useFocusEffect(
         useCallback(() => {
-            updateDB();
+            updateProducts();
         }, [])
     );
 
@@ -107,7 +116,7 @@ const Basket = () => {
         <View style={basketStyle.container}>
             {basketViewMode()}
             <Popup
-                isVisible={showManualProduct}
+                isVisible={buttonManualIsClick}
                 isClosed={popupIsClose}
                 data={{type: 'form'}}
                 style={{view: basketStyle.manual_view}}/>

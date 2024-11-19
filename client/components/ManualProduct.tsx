@@ -5,22 +5,19 @@ import { useState } from "react";
 import { basketStyle } from "../styles/Basket.style";
 
 type ManualProductType = {
-    getClick(isClick: boolean): void;
-    setClick: boolean,
+    getClick?(isClick: boolean): void;
+    setClick?: boolean,
 };
 
 const ManualProduct = ({getClick, setClick}: ManualProductType) => {
-    const [isClick, setIsClick] = useState(false);
+
+    const manualClick = () => {
+        getClick && getClick(true);
+    }
 
     useEffect(() => {
-        setIsClick(setClick)
-        getClick(setClick);
+        getClick && setClick && getClick(setClick);
     }, [setClick]);
-
-    useEffect(() => {
-        setIsClick(isClick)
-        getClick(isClick);
-    }, [isClick]);
 
     return ( 
         <ImageButton
@@ -33,7 +30,7 @@ const ManualProduct = ({getClick, setClick}: ManualProductType) => {
         text="Add manually"
         src={boxIcon}
         alt="Add manually"
-        onClick={() => setIsClick(!isClick)}
+        onClick={manualClick}
         disableDefaultStyle/>
     );
 };
