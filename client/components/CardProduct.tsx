@@ -7,6 +7,8 @@ import { ProductCardType } from "../types/TItem";
 import { cardStyle } from "../styles/Card.style";
 import { getProductIcon, getProductPriceFromQuantity, getProductQuantity, getProductSaveFromCard, parsePrice, parseQuantity } from "../utils/item.util";
 import { addInitialProductDB, deleteProductDB, updateProductDB } from "../services/db";
+import { useTheme } from "@react-navigation/native";
+import { ThemeType } from "../styles/Theme.style";
 
 type CardModeType = 'popup' | 'basket';
 
@@ -25,6 +27,7 @@ const CardProduct = ({
 }: CardProductType) => {
     const [cardProduct, setCardProduct] = useState(product);
     const [productIsDelete, setProductIsDelete] = useState(false);
+    const theme = useTheme() as ThemeType;
 
     const changeQuantity = async (value: number | string) => {
         const newQuantity = parseInt(parseQuantity(cardProduct.quantity, value, mode === 'popup'));
@@ -58,31 +61,33 @@ const CardProduct = ({
         if (productIsDelete) return <></>;
         return (
             <View style={[cardStyle.container, style]}>
-                <View style={cardStyle.data}>
+                <View style={[cardStyle.data, {backgroundColor: theme.colors.background, borderColor: theme.colors.border}]}>
                     <View style={cardStyle.firstData_product}>
                         <Image style={cardStyle.icon} source={getProductIcon(cardProduct)}/>
-                        <Text style={cardStyle.title}>{cardProduct.name}</Text>
+                        <Text style={[cardStyle.title, {color: theme.colors.text}]}>{cardProduct.name}</Text>
                     </View>
                     <View style={cardStyle.otherData_product}>
                         <View style={cardStyle.otherDataTop_product}>
-                            <Text style={cardStyle.content}>{parsePrice(cardProduct.price, '€')}</Text>
+                            <Text style={[cardStyle.content, {color: theme.colors.text}]}>{parsePrice(cardProduct.price, '€')}</Text>
                             <Image style={cardStyle.status} source={cardProduct.statusIcon}/>
                         </View>
                         <View style={cardStyle.otherDataBottom_product}>
                             <ImageButton
-                                style={{image: cardStyle.buttonQuantity}}
+                                alt='lessIcon'
                                 src={lessIcon}
                                 onClick={downQuantity}
+                                style={{image: cardStyle.buttonQuantity_image}}
                                 disableDefaultStyle/>
                             <TextInput
-                                style={cardStyle.content}
+                                style={[cardStyle.content, {color: theme.colors.text}]}
                                 keyboardType="numeric"
                                 value={getProductQuantity(cardProduct, mode === 'popup').toString()}
                                 onChangeText={text => changeQuantity(text)}/>
                             <ImageButton
-                                style={{image: cardStyle.buttonQuantity}}
+                                alt='moreIcon'
                                 src={moreIcon}
                                 onClick={upQuantity}
+                                style={{image: cardStyle.buttonQuantity_image}}
                                 disableDefaultStyle/>
                         </View>
                     </View>

@@ -14,35 +14,46 @@ import React, { useContext } from "react";
 import { Text, Image, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { tabNavigatorStyle } from "../styles/TabNavigator.style";
-import { AppContext } from "../styles/Theme.style";
+import { AppContext, ThemeType } from "../styles/Theme.style";
 import { useTheme } from "@react-navigation/native";
 
 const Navigator = () => {
     const {isDark, setIsDark} = useContext(AppContext);
-    const theme = useTheme();
+    const theme = useTheme() as ThemeType;
     const Tab = createBottomTabNavigator();
     return (
-        <Tab.Navigator initialRouteName='Home'>
+        <Tab.Navigator initialRouteName='Home' screenOptions={{
+            headerTintColor: theme.colors.text,
+            tabBarActiveTintColor: theme.colors.text,
+            headerStyle: {
+                backgroundColor: theme.colors.card,
+                borderBottomColor: theme.colors.border,
+            },
+            tabBarStyle: {
+                backgroundColor: theme.colors.card,
+                borderTopColor: theme.colors.border,
+            },
+        }}>
             <Tab.Screen name="Home" component={Home} options={{
-                tabBarIcon: () => <Image style={tabNavigatorStyle.size25} source={isDark ? homeDarkIcon : homeIcon}/>
+                tabBarIcon: () => <Image style={tabNavigatorStyle.size25} source={theme.dark ? homeDarkIcon : homeIcon}/>,
             }}/>
             <Tab.Screen name="Basket" component={Basket} options={{
-                tabBarIcon: () => <Image style={tabNavigatorStyle.size30} source={isDark ? basketDarkIcon : basketIcon}/>
+                tabBarIcon: () => <Image style={tabNavigatorStyle.size30} source={theme.dark ? basketDarkIcon : basketIcon}/>,
             }}/>
             <Tab.Screen name="History" component={History} options={{
-                tabBarIcon: () => <Image style={tabNavigatorStyle.size25} source={isDark ? historyDarkIcon : historyIcon}/>
+                tabBarIcon: () => <Image style={tabNavigatorStyle.size25} source={theme.dark ? historyDarkIcon : historyIcon}/>,
             }}/>
             <Tab.Screen name="Theme" component={() => null} options={{
                 tabBarButton: () => 
                     <View style={tabNavigatorStyle.theme}>
                         <ImageButton
-                            src={isDark ? darkThemeIcon : lightThemeIcon}
-                            onClick={() => setIsDark(!isDark)}
-                            style={{image: tabNavigatorStyle.size25}}
-                            colorButton={{backgroundColor: 'transparent'}}
+                            src={theme.dark ? darkThemeIcon : lightThemeIcon}
+                            onClick={() => setIsDark(!theme.dark)}
+                            style={{image: tabNavigatorStyle.theme_image}}
+                            animOnClick={false}
                             disableDefaultStyle/>
-                        <Text style={[tabNavigatorStyle.themeText, {color: theme.colors.text}]}>Theme</Text>
-                    </View>
+                        <Text style={[tabNavigatorStyle.theme_text, {color: theme.colors.text}]}>Theme</Text>
+                    </View>,
             }}/>
         </Tab.Navigator>
     );

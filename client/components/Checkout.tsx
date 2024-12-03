@@ -7,6 +7,8 @@ import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
 import { USER_ID, API_IP, API_PORT } from "@env";
 import { getProductCheckoutFromSave } from "../utils/item.util";
+import { useTheme } from "@react-navigation/native";
+import { ThemeType } from "../styles/Theme.style";
 
 type CheckoutType = {
     getClick?(isClick: boolean): void,
@@ -18,6 +20,7 @@ const Checkout = ({getClick, setClick}: CheckoutType) => {
     const [loading, setLoading] = useState(false);
     const [paymentIntentId, setPaymentIntentId] = useState<string>('');
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const theme = useTheme() as ThemeType;
     const apiUrl = `http://${API_IP}:${API_PORT}`;
 
     const fetchPaymentSheetParams = async () => {
@@ -115,10 +118,10 @@ const Checkout = ({getClick, setClick}: CheckoutType) => {
                 text: basketStyle.tabButton_text,
                 image: basketStyle.tabButton_image,
             }}
-            colorButton={{backgroundColor: 'lightblue', clickColor: '#f0f0f0'}}
+            colorButton={{backgroundColor: 'lightblue', clickColor: theme.colors.click}}
             text="Checkout"
-            src={walletIcon}
             alt="Checkout"
+            src={walletIcon}
             onClick={clickCheckout}
             disableButton={loading}
             disableDefaultStyle/>

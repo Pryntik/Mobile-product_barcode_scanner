@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { rootColor } from './Theme.style';
 
 export const popupStyle = StyleSheet.create({
     container: {
@@ -11,7 +12,11 @@ export const popupStyle = StyleSheet.create({
         width: '100%',
         height: '30%',
         borderWidth: 2,
-        borderColor: '#f0f0f0',
+        borderColor: rootColor.white.smoke,
+    },
+    popup_view: {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     },
     buttonClose_button: {
         position: 'absolute',

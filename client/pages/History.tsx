@@ -1,16 +1,18 @@
 import emptyHistoryIcon from "../assets/img/history_empty.png";
 import ImageButton from "../components/ImageButton";
 import CardPayment from "../components/CardPayment";
-import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Text, View } from "react-native";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { getAllPaymentsAPI } from "../services/api";
 import { historyStyle } from "../styles/History.style";
 import { PaymentType } from "../types/TItem";
+import { ThemeType } from "../styles/Theme.style";
 
 const History = () => {
     const [payments, setPayments] = useState<PaymentType[]>([]);
     const [historyIsEmpty, setHistoryIsEmpty] = useState(true);
+    const theme = useTheme() as ThemeType;
 
     const getCardPayments = () => {
         return payments.map(payment => <CardPayment payment={payment}/>);
@@ -60,7 +62,7 @@ const History = () => {
     );
 
     return (
-        <View style={historyStyle.container}>
+        <View style={[historyStyle.container, {backgroundColor: theme.colors.background}]}>
             {historyViewMode()}
         </View>
     );

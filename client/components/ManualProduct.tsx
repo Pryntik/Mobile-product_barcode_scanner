@@ -1,8 +1,9 @@
 import boxIcon from "../assets/img/box.png";
 import ImageButton from "./ImageButton";
 import React, { useEffect } from "react";
-import { useState } from "react";
 import { basketStyle } from "../styles/Basket.style";
+import { useTheme } from "@react-navigation/native";
+import { ThemeType } from "../styles/Theme.style";
 
 type ManualProductType = {
     getClick?(isClick: boolean): void;
@@ -10,6 +11,7 @@ type ManualProductType = {
 };
 
 const ManualProduct = ({getClick, setClick}: ManualProductType) => {
+    const theme = useTheme() as ThemeType;
 
     const manualClick = () => {
         getClick && getClick(true);
@@ -26,10 +28,10 @@ const ManualProduct = ({getClick, setClick}: ManualProductType) => {
             text: basketStyle.tabButton_text,
             image: basketStyle.tabButton_image,
         }}
-        colorButton={{backgroundColor: 'lightgreen', clickColor: '#f0f0f0'}}
+        colorButton={{backgroundColor: 'lightgreen', clickColor: theme.colors.click}}
         text="Add manually"
-        src={boxIcon}
         alt="Add manually"
+        src={boxIcon}
         onClick={manualClick}
         disableDefaultStyle/>
     );

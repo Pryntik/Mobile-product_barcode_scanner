@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { rootColor } from './Theme.style';
 
 export const cardStyle = StyleSheet.create({
     container: {
@@ -17,7 +18,7 @@ export const cardStyle = StyleSheet.create({
         justifyContent: 'center',
         width: '90%',
         height: '100%',
-        borderColor: '#f0f0f0',
+        borderColor: rootColor.white.smoke,
         borderWidth: 2,
         borderRadius: 10,
     },
@@ -76,7 +77,7 @@ export const cardStyle = StyleSheet.create({
         lineHeight: 40,
         height: 40,
     },
-    buttonQuantity: {
+    buttonQuantity_image: {
         width: 20,
         height: 20,
     },

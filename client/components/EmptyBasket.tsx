@@ -1,8 +1,10 @@
 import emptyBasketIcon from '../assets/img/basket_empty.png'
 import ImageButton from "./ImageButton";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { basketStyle } from "../styles/Basket.style";
 import { deleteAllProductsDB } from '../services/db';
+import { useTheme } from '@react-navigation/native';
+import { ThemeType } from '../styles/Theme.style';
 
 type EmptyBasketType = {
     getClick?(isClick: boolean): void,
@@ -10,6 +12,7 @@ type EmptyBasketType = {
 };
 
 const EmptyBasket = ({getClick, setClick}: EmptyBasketType) => {
+    const theme = useTheme() as ThemeType;
 
     const deleteProductsFromBasket = async () => {
         getClick && getClick(true);
@@ -27,10 +30,10 @@ const EmptyBasket = ({getClick, setClick}: EmptyBasketType) => {
             text: basketStyle.tabButton_text,
             image: basketStyle.tabButton_image,
         }}
-        colorButton={{backgroundColor: 'lightcoral', clickColor: '#f0f0f0'}}
+        colorButton={{backgroundColor: 'lightcoral', clickColor: theme.colors.click}}
         text="Empty basket"
-        src={emptyBasketIcon}
         alt="Empty basket"
+        src={emptyBasketIcon}
         onClick={deleteProductsFromBasket}
         disableDefaultStyle/>
     );

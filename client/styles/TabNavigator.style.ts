@@ -13,8 +13,12 @@ export const tabNavigatorStyle = StyleSheet.create({
         alignItems: "center",
         height: 50,
     },
-    themeText: {
+    theme_text: {
         fontSize: 10,
+    },
+    theme_image: {
+        width: 25,
+        height: 25,
     },
     size30: {
         width: 30,

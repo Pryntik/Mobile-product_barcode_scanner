@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { rootColor } from './Theme.style';
 
 export const basketStyle = StyleSheet.create({
     container: {
@@ -18,7 +19,7 @@ export const basketStyle = StyleSheet.create({
         height: 50,
         backgroundColor: 'white',
         borderWidth: 1,
-        borderColor: '#f0f0f0',
+        borderColor: rootColor.white.smoke,
         position: 'absolute',
         bottom: 0,
         marginBottom: 100,
@@ -35,7 +36,7 @@ export const basketStyle = StyleSheet.create({
         height: 100,
         backgroundColor: 'white',
         borderWidth: 1,
-        borderColor: '#f0f0f0',
+        borderColor: rootColor.white.smoke,
         position: 'absolute',
         bottom: 0,
     },
@@ -87,7 +88,7 @@ export const basketStyle = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5,
         borderWidth: 2,
-        borderColor: '#f0f0f0',
+        borderColor: rootColor.white.smoke,
         borderRadius: 10,
     },
     manual_submitInput: {

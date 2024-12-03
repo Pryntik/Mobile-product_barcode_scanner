@@ -1,31 +1,46 @@
 import React from "react";
-import { DefaultTheme, Theme as ThemeType } from '@react-navigation/native';
+import { ColorValue } from "react-native";
+import { DefaultTheme, Theme as ThemeNavigationType } from '@react-navigation/native';
 
 export const rootColor = {
     white: {
-        primary: '#FFFFFF',
+        primary: 'white',
         secondary: '#F2F2F2',
-        text: '#000000',
-        color: '#FFFFFF',
+        text: 'white',
+        smoke: '#f0f0f0',
+        color: 'white',
+    },
+    gray: {
+        color: '#dfdfdf',
     },
     black: {
         primary: '#202124',
         secondary: '#3c4042',
-        text: '#FFFFFF',
-        color: '#000000',
+        text: 'black',
+        smoke: '#232526',
+        color: 'black',
     },
 }
+
+export type ThemeType = ThemeNavigationType & {
+    colors: ThemeNavigationType['colors'] & {
+        reverse: ColorValue,
+        click: ColorValue,
+    };
+};
 
 export const LightTheme: ThemeType = {
     ...DefaultTheme,
     dark: false,
     colors: {
         primary: rootColor.white.primary,
-        background: rootColor.white.secondary,
-        card: '#fff',
-        text: rootColor.white.text,
-        border: rootColor.white.color,
-        notification: '#000',
+        background: rootColor.white.primary,
+        card: rootColor.white.secondary,
+        text: rootColor.black.text,
+        border: rootColor.white.smoke,
+        notification: rootColor.white.secondary,
+        reverse: rootColor.black.primary,
+        click: rootColor.white.smoke,
     },
 };
 
@@ -34,11 +49,13 @@ export const DarkTheme: ThemeType = {
     dark: true,
     colors: {
         primary: rootColor.black.primary,
-        background: rootColor.black.secondary,
-        card: '#000',
-        text: rootColor.black.text,
-        border: rootColor.black.color,
-        notification: '#fff',
+        background: rootColor.black.primary,
+        card: rootColor.black.smoke,
+        text: rootColor.white.text,
+        border: rootColor.white.smoke,
+        notification: rootColor.black.secondary,
+        reverse: rootColor.white.primary,
+        click: rootColor.black.secondary,
     },
 };
 

@@ -5,11 +5,13 @@ import CardProduct from "./CardProduct";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleProp, TextInput, View, ViewStyle } from "react-native"
 import { popupStyle } from "../styles/Popup.style";
+import { basketStyle } from "../styles/Basket.style";
 import { getProductCard, getProductId, getProductSaveFromCard, getProductValidIconStatus, isValidProductToSave } from "../utils/item.util";
 import { ProductCardUnknown, ProductCardType, ProductCardDefault, ProductType, MaybeType } from "../types/TItem";
 import { addProductDB } from "../services/db";
 import { toast } from "../utils/log.util";
-import { basketStyle } from "../styles/Basket.style";
+import { useTheme } from "@react-navigation/native";
+import { ThemeType } from "../styles/Theme.style";
 
 type PopupDataModeType = 'card' | 'form';
 
@@ -44,13 +46,15 @@ const Popup = ({
 }: PopupType) => {
     const ySize = 300;
     const slideAnim = useRef(new Animated.Value(ySize)).current;
-    const popupStyle_view = [popupStyle.container, {transform: [{translateY: slideAnim}]}, style?.view];
+    const popupStyle_view = [popupStyle.container, style?.view];
+    const popupStyle_animation = [popupStyle_view, {transform: [{translateY: slideAnim}]}];
     const closeStyle_button = [popupStyle.buttonClose_button, style?.closeButton]
     const [isShow, setIsShow] = useState(isVisible);
     const [productCard, setProductCard] = useState<ProductCardType>(ProductCardUnknown);
     const [newProductCard, setNewProductCard] = useState<ProductCardType>(ProductCardUnknown);
     const [formName, setFormName] = useState('');
     const [formPrice, setFormPrice] = useState(0);
+    const theme = useTheme() as ThemeType;
 
     const openPopup = () => {
         setIsShow(true);
@@ -107,7 +111,7 @@ const Popup = ({
     const popupViewMode = () => {
         if (data.type === 'card') {
             return (
-                <View style={style?.view}>                
+                <View style={[style?.view, popupStyle.popup_view]}>                
                     <CardProduct
                         product={productCard}
                         getCardProduct={(cardProduct) => setNewProductCard(cardProduct)}
@@ -115,14 +119,18 @@ const Popup = ({
                         style={popupStyle.buttonCard}/>
                     <ImageButton
                         onClick={addProduct}
-                        text="Add product"
+                        text='Add product'
+                        alt='Add product'
                         src={getProductValidIconStatus(productCard)}
-                        alt="Add product"
                         style={{
                             view: popupStyle.buttonSubmit_view,
-                            button: popupStyle.buttonSubmit_button,
-                            text: popupStyle.buttonSubmit_text,
+                            button: [popupStyle.buttonSubmit_button, {borderColor: theme.colors.border}],
+                            text: [popupStyle.buttonSubmit_text, {color: theme.colors.text}],
                             image: popupStyle.buttonSubmit_image,
+                        }}
+                        colorButton={{
+                            backgroundColor: theme.colors.background,
+                            clickColor: theme.colors.click,
                         }}
                         disableDefaultStyle/>
                 </View>
@@ -130,22 +138,32 @@ const Popup = ({
         }
         if (data.type === 'form') {
             return (
-                <View style={style?.view}>
+                <View style={[style?.view, basketStyle.manual_view, {backgroundColor: theme.colors.background}]}>
                     <TextInput
                         style={[basketStyle.manual_textInput, {marginTop: 50}]}
                         onChangeText={(text) => setFormName(text)}
-                        placeholder="Name"/>
+                        placeholder='Name'
+                        placeholderTextColor={theme.colors.text}/>
                     <TextInput
                         style={basketStyle.manual_textInput}
-                        keyboardType="numeric"
+                        keyboardType='numeric'
                         onChangeText={(text) => !isNaN(parseInt(text)) && setFormPrice(parseInt(text))}
-                        placeholder="Price"/>
+                        placeholder='Price'
+                        placeholderTextColor={theme.colors.text}/>
                     <ImageButton
                         onClick={addManualProduct}
-                        text="Add product"
+                        text='Add product'
+                        alt='Add product'
                         src={checkIcon}
-                        alt="Add product"
-                        style={{view: basketStyle.manual_submitInput}}/>
+                        style={{
+                            view: basketStyle.manual_submitInput,
+                            button: {borderColor: theme.colors.border},
+                            text: {color: theme.colors.text},
+                        }}
+                        colorButton={{
+                            borderColor: theme.colors.border,
+                            clickColor: theme.colors.click
+                        }}/>
                 </View>
             );
         };
@@ -173,15 +191,16 @@ const Popup = ({
 
     return (
         isShow && (
-            <Animated.View style={popupStyle_view}>
+            <Animated.View style={[popupStyle_animation, {backgroundColor: theme.colors.background}]}>
                 <ImageButton 
                     onClick={closePopup}
                     src={crossIcon}
-                    alt="Close"
+                    alt='Close'
                     style={{
                         button: closeStyle_button,
                         image: popupStyle.buttonClose_image
                     }}
+                    animOnClick={false}
                     disableDefaultStyle/>
                 {popupViewMode()}
             </Animated.View>

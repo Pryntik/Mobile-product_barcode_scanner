@@ -10,11 +10,15 @@ import { AppContext, LightTheme, DarkTheme } from './styles/Theme.style';
 
 const App = () => {
   const [isDark, setIsDark] = useState(false);
-  const theme = isDark ? DarkTheme : LightTheme;
+  const [theme, setTheme] = useState(LightTheme);
 
   const lockOrientation = async () => {
       await lockAsync(OrientationLock.PORTRAIT_UP);
   };
+
+  useEffect(() => {
+      setTheme(isDark ? DarkTheme : LightTheme);
+  }, [isDark]);
 
   useEffect(() => {
       lockOrientation();
