@@ -26,6 +26,7 @@ export type ThemeType = ThemeNavigationType & {
     colors: ThemeNavigationType['colors'] & {
         reverse: ColorValue,
         click: ColorValue,
+        low: ColorValue,
     };
 };
 
@@ -41,6 +42,7 @@ export const LightTheme: ThemeType = {
         notification: rootColor.white.secondary,
         reverse: rootColor.black.primary,
         click: rootColor.white.smoke,
+        low: rootColor.white.smoke,
     },
 };
 
@@ -56,6 +58,7 @@ export const DarkTheme: ThemeType = {
         notification: rootColor.black.secondary,
         reverse: rootColor.white.primary,
         click: rootColor.black.secondary,
+        low: rootColor.white.smoke,
     },
 };
 

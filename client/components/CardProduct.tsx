@@ -77,6 +77,7 @@ const CardProduct = ({
                                 src={lessIcon}
                                 onClick={downQuantity}
                                 style={{image: cardStyle.buttonQuantity_image}}
+                                animOnClick={false}
                                 disableDefaultStyle/>
                             <TextInput
                                 style={[cardStyle.content, {color: theme.colors.text}]}
@@ -88,6 +89,7 @@ const CardProduct = ({
                                 src={moreIcon}
                                 onClick={upQuantity}
                                 style={{image: cardStyle.buttonQuantity_image}}
+                                animOnClick={false}
                                 disableDefaultStyle/>
                         </View>
                     </View>

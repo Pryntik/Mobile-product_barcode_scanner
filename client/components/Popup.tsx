@@ -140,12 +140,12 @@ const Popup = ({
             return (
                 <View style={[style?.view, basketStyle.manual_view, {backgroundColor: theme.colors.background}]}>
                     <TextInput
-                        style={[basketStyle.manual_textInput, {marginTop: 50}]}
+                        style={[basketStyle.manual_textInput, {marginTop: 50, color: theme.colors.text}]}
                         onChangeText={(text) => setFormName(text)}
                         placeholder='Name'
                         placeholderTextColor={theme.colors.text}/>
                     <TextInput
-                        style={basketStyle.manual_textInput}
+                        style={[basketStyle.manual_textInput, {color: theme.colors.text}]}
                         keyboardType='numeric'
                         onChangeText={(text) => !isNaN(parseInt(text)) && setFormPrice(parseInt(text))}
                         placeholder='Price'

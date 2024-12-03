@@ -20,8 +20,6 @@ export const basketStyle = StyleSheet.create({
         backgroundColor: 'white',
         borderWidth: 1,
         borderColor: rootColor.white.smoke,
-        position: 'absolute',
-        bottom: 0,
         marginBottom: 100,
     },
     total_text: {

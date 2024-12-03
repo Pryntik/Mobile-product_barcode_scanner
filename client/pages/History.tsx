@@ -1,12 +1,14 @@
 import emptyHistoryIcon from "../assets/img/history_empty.png";
 import ImageButton from "../components/ImageButton";
 import CardPayment from "../components/CardPayment";
-import React, { useCallback, useState } from "react";
-import { Text, View } from "react-native";
+import ManualPayment from "../components/ManualPayment";
+import EmptyHistory from "../components/EmptyHistory";
+import React, { useCallback, useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { getAllPaymentsAPI } from "../services/api";
 import { historyStyle } from "../styles/History.style";
-import { PaymentType } from "../types/TItem";
+import { PaymentDefault, PaymentType } from "../types/TItem";
 import { ThemeType } from "../styles/Theme.style";
 
 const History = () => {
@@ -14,15 +16,29 @@ const History = () => {
     const [historyIsEmpty, setHistoryIsEmpty] = useState(true);
     const theme = useTheme() as ThemeType;
 
+    const emptyManualPayment = () => {
+        setPayments([]);
+    }
+
+    const addManualPayment = () => {
+        setPayments(prevPayment => [...prevPayment, PaymentDefault]);
+    }
+
     const getCardPayments = () => {
-        return payments.map(payment => <CardPayment payment={payment}/>);
+        return payments.map((payment, i) => <CardPayment key={i} payment={payment} style={historyStyle.card}/>);
     }
 
     const historyViewMode = () => {
         if (historyIsEmpty === false) {
             return (
                 <View>
-                    {getCardPayments()}
+                    <ScrollView style={[historyStyle.scroll_view, {backgroundColor: theme.colors.background}]}>
+                        {getCardPayments()}
+                    </ScrollView>
+                    <View style={[historyStyle.buttons_view, {backgroundColor: theme.colors.background}]}>
+                        <EmptyHistory getClick={emptyManualPayment}/>
+                        <ManualPayment getClick={addManualPayment}/>
+                    </View>
                 </View>
             );
         }
@@ -34,6 +50,9 @@ const History = () => {
                     style={{image: historyStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={historyStyle.empty_text}>Empty</Text>
+                <View style={[historyStyle.buttons_view, {backgroundColor: theme.colors.background}]}>
+                    <ManualPayment getClick={addManualPayment}/>
+                </View>
             </View>
         );
     }
@@ -54,6 +73,10 @@ const History = () => {
             console.error(error);
         }
     };
+
+    useEffect(() => {
+        setHistoryIsEmpty(payments.length <= 0);
+    }, [payments])
 
     useFocusEffect(
         useCallback(() => {

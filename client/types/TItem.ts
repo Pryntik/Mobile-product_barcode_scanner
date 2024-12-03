@@ -54,26 +54,6 @@ export type ProductIconType = {
     icon: ImageSourcePropType,
 };
 
-// Default const
-
-export const ProductCardDefault: ProductCardType = {
-    id: null,
-    name: 'Product default',
-    price: 0,
-    quantity: 1,
-    icon: pUnknown,
-    statusIcon: unknownIcon,
-};
-
-export const ProductCardUnknown: ProductCardType = {
-    id: null,
-    name: 'Product unknown',
-    price: 0,
-    quantity: 1,
-    icon: pUnknown,
-    statusIcon: crossIcon,
-};
-
 // Item type
 
 export type ItemCheckoutType = {
@@ -105,6 +85,26 @@ export type PaymentType = {
     purchased_items: ItemPurchaseType[];
 };
 
+// Product Card
+
+export const ProductCardDefault: ProductCardType = {
+    id: null,
+    name: 'Product default',
+    price: 0,
+    quantity: 1,
+    icon: pUnknown,
+    statusIcon: unknownIcon,
+};
+
+export const ProductCardUnknown: ProductCardType = {
+    id: null,
+    name: 'Product unknown',
+    price: 0,
+    quantity: 1,
+    icon: pUnknown,
+    statusIcon: crossIcon,
+};
+
 // Product
 
 export const pBanane: ProductType = {
@@ -133,3 +133,16 @@ export const ValidProducts: ProductIconType[] = [
     iBanane,
     iPomme,
 ];
+
+// Payment
+
+export const PaymentDefault: PaymentType = {
+    id: '',
+    is_checked: false,
+    checkout_date: null,
+    customer: {
+        id: '',
+        email: '',
+    },
+    purchased_items: [],
+};
