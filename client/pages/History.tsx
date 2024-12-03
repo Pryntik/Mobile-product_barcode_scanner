@@ -14,18 +14,24 @@ import { ThemeType } from "../styles/Theme.style";
 const History = () => {
     const [payments, setPayments] = useState<PaymentType[]>([]);
     const [historyIsEmpty, setHistoryIsEmpty] = useState(true);
+    const [manualId, setManualId] = useState(0);
     const theme = useTheme() as ThemeType;
 
     const emptyManualPayment = () => {
         setPayments([]);
+        setManualId(0);
     }
 
     const addManualPayment = () => {
-        setPayments(prevPayment => [...prevPayment, PaymentDefault]);
+        const manualPayment = {...PaymentDefault, id: manualId.toString()};
+        setPayments(prevPayment => [...prevPayment, manualPayment]);
+        setManualId(manualId + 1);
     }
 
     const getCardPayments = () => {
-        return payments.map((payment, i) => <CardPayment key={i} payment={payment} style={historyStyle.card}/>);
+        return payments.map((payment, i) => {
+            return <CardPayment key={i} payment={payment} style={historyStyle.card}/>
+        });
     }
 
     const historyViewMode = () => {

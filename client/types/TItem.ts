@@ -141,8 +141,8 @@ export const PaymentDefault: PaymentType = {
     is_checked: false,
     checkout_date: null,
     customer: {
-        id: '',
-        email: '',
+        id: 'cus_?',
+        email: 'example@gmail.com',
     },
     purchased_items: [],
 };

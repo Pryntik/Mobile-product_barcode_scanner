@@ -61,17 +61,17 @@ const CardProduct = ({
         if (productIsDelete) return <></>;
         return (
             <View style={[cardStyle.container, style]}>
-                <View style={[cardStyle.data, {backgroundColor: theme.colors.background, borderColor: theme.colors.border}]}>
+                <View style={[cardStyle.data_product, {backgroundColor: theme.colors.background, borderColor: theme.colors.border}]}>
                     <View style={cardStyle.firstData_product}>
                         <Image style={cardStyle.icon} source={getProductIcon(cardProduct)}/>
-                        <Text style={[cardStyle.title, {color: theme.colors.text}]}>{cardProduct.name}</Text>
+                        <Text style={[cardStyle.title_product, {color: theme.colors.text}]}>{cardProduct.name}</Text>
                     </View>
                     <View style={cardStyle.otherData_product}>
-                        <View style={cardStyle.otherDataTop_product}>
-                            <Text style={[cardStyle.content, {color: theme.colors.text}]}>{parsePrice(cardProduct.price, '€')}</Text>
-                            <Image style={cardStyle.status} source={cardProduct.statusIcon}/>
+                        <View style={cardStyle.secondDataTop_product}>
+                            <Text style={[cardStyle.content_product, {color: theme.colors.text}]}>{parsePrice(cardProduct.price, '€')}</Text>
+                            <Image style={cardStyle.status_product} source={cardProduct.statusIcon}/>
                         </View>
-                        <View style={cardStyle.otherDataBottom_product}>
+                        <View style={cardStyle.secondDataBottom_product}>
                             <ImageButton
                                 alt='lessIcon'
                                 src={lessIcon}
@@ -80,7 +80,7 @@ const CardProduct = ({
                                 animOnClick={false}
                                 disableDefaultStyle/>
                             <TextInput
-                                style={[cardStyle.content, {color: theme.colors.text}]}
+                                style={[cardStyle.content_product, {color: theme.colors.text}]}
                                 keyboardType="numeric"
                                 value={getProductQuantity(cardProduct, mode === 'popup').toString()}
                                 onChangeText={text => changeQuantity(text)}/>

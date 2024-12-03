@@ -1,8 +1,12 @@
+import crossIcon from "../assets/img/cross.png";
+import checkIcon from "../assets/img/check.png";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleProp, ViewStyle } from "react-native";
+import { View, Text, StyleProp, ViewStyle, Image } from "react-native";
 import { PaymentType } from "../types/TItem";
 import { cardStyle } from "../styles/Card.style";
-import { getItemPurchaseAmount, getItemPurchaseLength } from "../utils/item.util";
+import { getItemPurchaseAmount, getItemPurchaseLength, parsePrice } from "../utils/item.util";
+import { parseBoolean, parseDate, parseNull } from "../utils/global.util";
+import { useTheme } from "@react-navigation/native";
 
 type CardPaymentType = {
     payment: PaymentType,
@@ -16,6 +20,7 @@ const CardPayment = ({
     style,
 }: CardPaymentType) => {
     const [cardPayment, setCardPayment] = useState(payment);
+    const theme = useTheme();
 
     useEffect(() => {
         setCardPayment(payment);
@@ -24,19 +29,19 @@ const CardPayment = ({
 
     return (
         <View style={[cardStyle.container, style]}>
-            <View style={cardStyle.data}>
-                <View style={cardStyle.firstData_product}>
-                    <Text style={cardStyle.title}>{cardPayment.id}</Text>
-                    <Text style={cardStyle.content}>{cardPayment.checkout_date}</Text>
-                    <Text style={cardStyle.content}>{cardPayment.is_checked}</Text>
+            <View style={cardStyle.data_payment}>
+                <View style={cardStyle.firstData_payment}>
+                    <Text style={{color: theme.colors.text}}>{cardPayment.id}</Text>
+                    <Text style={{color: theme.colors.text}}>{parseDate(cardPayment.checkout_date)}</Text>
+                    <Image style={cardStyle.status_payment} source={cardPayment.is_checked ? checkIcon : crossIcon}></Image>
                 </View>
                 <View style={cardStyle.secondData_payment}>
-                    <Text style={cardStyle.title}>{cardPayment.customer.id}</Text>
-                    <Text style={cardStyle.content}>{cardPayment.customer.email}</Text>
+                    <Text style={{color: theme.colors.text}}>{cardPayment.customer.id}</Text>
+                    <Text style={{color: theme.colors.text}}>{cardPayment.customer.email}</Text>
                 </View>
                 <View style={cardStyle.thirdData_payment}>
-                    <Text style={cardStyle.title}>{getItemPurchaseLength(cardPayment.purchased_items)}</Text>
-                    <Text style={cardStyle.content}>{getItemPurchaseAmount(cardPayment.purchased_items)}</Text>
+                    <Text style={{color: theme.colors.text}}>{getItemPurchaseLength(cardPayment.purchased_items)}</Text>
+                    <Text style={{color: theme.colors.text}}>{parsePrice(getItemPurchaseAmount(cardPayment.purchased_items), '€')}</Text>
                 </View>
             </View>
         </View>

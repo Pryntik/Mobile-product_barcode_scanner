@@ -1,4 +1,4 @@
-import EmptyHistoryIcon from '../assets/img/basket_empty.png'
+import EmptyHistoryIcon from '../assets/img/history_empty.png'
 import ImageButton from "./ImageButton";
 import React, { useEffect } from "react";
 import { historyStyle } from '../styles/History.style';
@@ -14,7 +14,7 @@ type EmptyHistoryType = {
 const EmptyHistory = ({getClick, setClick}: EmptyHistoryType) => {
     const theme = useTheme() as ThemeType;
 
-    const deleteProductsFromBasket = async () => {
+    const deleteProductsFromHistory = async () => {
         getClick && getClick(true);
         await deleteAllProductsDB();
     }
@@ -31,10 +31,10 @@ const EmptyHistory = ({getClick, setClick}: EmptyHistoryType) => {
             image: historyStyle.tabButton_image,
         }}
         colorButton={{backgroundColor: 'lightcoral', clickColor: theme.colors.click}}
-        text="Empty basket"
-        alt="Empty basket"
+        text="Empty history"
+        alt="Empty history"
         src={EmptyHistoryIcon}
-        onClick={deleteProductsFromBasket}
+        onClick={deleteProductsFromHistory}
         disableDefaultStyle/>
     );
 };

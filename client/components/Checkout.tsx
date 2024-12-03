@@ -9,6 +9,7 @@ import { USER_ID, API_IP, API_PORT } from "@env";
 import { getProductCheckoutFromSave } from "../utils/item.util";
 import { useTheme } from "@react-navigation/native";
 import { ThemeType } from "../styles/Theme.style";
+import { toast } from "../utils/global.util";
 
 type CheckoutType = {
     getClick?(isClick: boolean): void,
@@ -27,16 +28,18 @@ const Checkout = ({getClick, setClick}: CheckoutType) => {
         try {
             const productsDB = await getAllProductsDB();
             const products = productsDB.map(product => getProductCheckoutFromSave(product));
+            const body = JSON.stringify(JSON.stringify({
+                "pending_items": products,
+                "customer_id": USER_ID,
+            }));
+            toast(`customer_id: ${USER_ID}\npending_items: ${JSON.stringify(products)}`);
             const response = await fetch(`${apiUrl}/payments/`, {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    "pending_items": products,
-                    "customer_id": USER_ID,
-                }),
+                body: body,
             });
             const { paymentIntent, ephemeralKey, customer } = await response.json();
 
@@ -47,6 +50,7 @@ const Checkout = ({getClick, setClick}: CheckoutType) => {
             };            
         }
         catch(error) {
+            toast(`Error: ${error}`);
             throw error;
         }
     };

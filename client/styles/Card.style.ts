@@ -11,11 +11,22 @@ export const cardStyle = StyleSheet.create({
         width: '100%',
         height: 80,
     },
-    data: {
+    data_product: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '90%',
+        height: '100%',
+        borderColor: rootColor.white.smoke,
+        borderWidth: 2,
+        borderRadius: 10,
+    },
+    data_payment: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
         width: '90%',
         height: '100%',
         borderColor: rootColor.white.smoke,
@@ -28,7 +39,7 @@ export const cardStyle = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
-    title: {
+    title_product: {
         fontSize: 16,
         fontWeight: 'bold',
         lineHeight: 40,
@@ -37,12 +48,12 @@ export const cardStyle = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
-    content: {
+    content_product: {
         fontSize: 16,
         marginLeft: 5,
         marginRight: 5,
     },
-    status: {
+    status_product: {
         width: 20,
         height: 20,
         marginLeft: 5,
@@ -61,7 +72,7 @@ export const cardStyle = StyleSheet.create({
         width: '20%',
         marginRight: '10%',
     },
-    otherDataTop_product: {
+    secondDataTop_product: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -69,7 +80,7 @@ export const cardStyle = StyleSheet.create({
         lineHeight: 40,
         height: 40,
     },
-    otherDataBottom_product: {
+    secondDataBottom_product: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -81,13 +92,35 @@ export const cardStyle = StyleSheet.create({
         width: 20,
         height: 20,
     },
+    title_payment: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        lineHeight: 40,
+        height: 40,
+        width: '50%',
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    content_payment: {
+        fontSize: 16,
+        marginLeft: 5,
+        marginRight: 5,
+    },
+    status_payment: {
+        width: 15,
+        height: 15,
+    },
     firstData_payment: {
-
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     secondData_payment: {
-
+        display: 'flex',
+        flexDirection: 'column',
     },
     thirdData_payment: {
-
+        display: 'flex',
+        flexDirection: 'column',
     },
 });

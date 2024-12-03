@@ -9,7 +9,7 @@ import { basketStyle } from "../styles/Basket.style";
 import { getProductCard, getProductId, getProductSaveFromCard, getProductValidIconStatus, isValidProductToSave } from "../utils/item.util";
 import { ProductCardUnknown, ProductCardType, ProductCardDefault, ProductType, MaybeType } from "../types/TItem";
 import { addProductDB } from "../services/db";
-import { toast } from "../utils/log.util";
+import { toast } from "../utils/global.util";
 import { useTheme } from "@react-navigation/native";
 import { ThemeType } from "../styles/Theme.style";
 
