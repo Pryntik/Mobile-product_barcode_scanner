@@ -6,10 +6,11 @@ import { SQLiteProvider } from 'expo-sqlite';
 import { createTables } from './services/db';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import { STRIPE_PK } from '@env';
-import { AppContext, Theme } from './styles/Theme.style';
+import { AppContext, LightTheme, DarkTheme } from './styles/Theme.style';
 
 const App = () => {
-  const [isLightTheme, setIsLightTheme] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+  const theme = isDark ? DarkTheme : LightTheme;
 
   const lockOrientation = async () => {
       await lockAsync(OrientationLock.PORTRAIT_UP);
@@ -22,8 +23,8 @@ const App = () => {
   return (
     <StripeProvider publishableKey={STRIPE_PK} merchantIdentifier="univ.com.barcodescanner">
       <SQLiteProvider databaseName="Basket.db" onInit={createTables}>
-        <NavigationContainer theme={isLightTheme ? Theme.light : Theme.dark}>
-          <AppContext.Provider value={{context: isLightTheme, setContext: setIsLightTheme}}>
+        <NavigationContainer theme={theme}>
+          <AppContext.Provider value={{isDark, setIsDark}}>
             <Navigator/>
           </AppContext.Provider>
         </NavigationContainer>
