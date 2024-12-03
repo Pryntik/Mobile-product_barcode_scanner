@@ -37,6 +37,12 @@ def get_payments(
 
     return db.query(Payment).offset(offset).limit(limit).all()
 
+@payments_router.get('/all', response_model=List[PaymentSchema])
+def get_payments(db: Session = Depends(get_db)):
+    payments = db.query(Payment).all()
+    print(len(payments))
+    return payments
+
 
 @payments_router.get('/{customer_id}', response_model=List[PaymentSchema])
 def get_payments_by_customer_id(

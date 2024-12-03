@@ -47,20 +47,20 @@ export const cardStyle = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
     },
-    firstData: {
+    firstData_product: {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
         width: '70%',
     },
-    otherData: {
+    otherData_product: {
         display: 'flex',
         flexDirection: 'column',
         width: '20%',
         marginRight: '10%',
     },
-    otherDataTop: {
+    otherDataTop_product: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -68,7 +68,7 @@ export const cardStyle = StyleSheet.create({
         lineHeight: 40,
         height: 40,
     },
-    otherDataBottom: {
+    otherDataBottom_product: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -79,5 +79,14 @@ export const cardStyle = StyleSheet.create({
     buttonQuantity: {
         width: 20,
         height: 20,
-    }
+    },
+    firstData_payment: {
+
+    },
+    secondData_payment: {
+
+    },
+    thirdData_payment: {
+
+    },
 });

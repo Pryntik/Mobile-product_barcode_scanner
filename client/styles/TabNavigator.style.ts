@@ -7,6 +7,15 @@ export const tabNavigatorStyle = StyleSheet.create({
         justifyContent: 'flex-end',
         height: 20,
     },
+    theme: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 50,
+    },
+    themeText: {
+        fontSize: 10,
+    },
     size30: {
         width: 30,
         height: 30,

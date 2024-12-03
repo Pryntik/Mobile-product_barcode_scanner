@@ -23,7 +23,7 @@ type ImageButtonType = {
     text?: string,
     alt?: string,
     src?: ImageSourcePropType,
-    style: StyleImageButtonType,
+    style?: StyleImageButtonType,
     colorButton?: ColorImageButtonType,
 }
 
@@ -44,15 +44,15 @@ const ImageButton = ({
 }: ImageButtonType) => {
     const [isClicked, setIsClicked] = useState(false);
 
-    const stylesView: StyleProp<ViewStyle>[] = [style.view, buttonStyle.imageButton_view]
-    const stylesButton: StyleProp<ViewStyle>[] = [style.view, buttonStyle.imageButton_button, {borderColor: colorButton.color}]
-    const stylesText: StyleProp<TextStyle>[] = [style.text, buttonStyle.imageButton_text]
-    const stylesImage: StyleProp<ImageStyle>[] = [style.image, buttonStyle.imageButton_image]
+    const stylesView: StyleProp<ViewStyle>[] = [style?.view, buttonStyle.imageButton_view]
+    const stylesButton: StyleProp<ViewStyle>[] = [style?.view, buttonStyle.imageButton_button, {borderColor: colorButton.color}]
+    const stylesText: StyleProp<TextStyle>[] = [style?.text, buttonStyle.imageButton_text]
+    const stylesImage: StyleProp<ImageStyle>[] = [style?.image, buttonStyle.imageButton_image]
 
-    const sView = disableDefaultStyle ? style.view : stylesView;
-    const sButton = disableDefaultStyle ? style.button : stylesButton;
-    const sText = disableDefaultStyle ? style.text : stylesText;
-    const sImage = disableDefaultStyle ? style.image : stylesImage;
+    const sView = disableDefaultStyle ? style?.view : stylesView;
+    const sButton = disableDefaultStyle ? style?.button : stylesButton;
+    const sText = disableDefaultStyle ? style?.text : stylesText;
+    const sImage = disableDefaultStyle ? style?.image : stylesImage;
 
     const otherButtonStyle = () => {
         if (disableButton) return {backgroundColor: colorButton.disabledColor};

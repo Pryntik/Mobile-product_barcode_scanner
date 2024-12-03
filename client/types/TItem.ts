@@ -6,6 +6,7 @@ import pUnknown from "../assets/product/p_unknown.png";
 import { ImageSourcePropType } from "react-native";
 
 // Type
+
 export type NullableType<T> = T | null;
 
 export type UndefinebaleType<T> = T | undefined;
@@ -13,6 +14,8 @@ export type UndefinebaleType<T> = T | undefined;
 export type MaybeType<T> = T | null | undefined;
 
 export type MaybeProductType = MaybeType<AllProductType> | string | object;
+
+// Product type
 
 export type ProductExtendType = ProductSaveType | ProductCardType;
 
@@ -51,7 +54,8 @@ export type ProductIconType = {
     icon: ImageSourcePropType,
 };
 
-// Default
+// Default const
+
 export const ProductCardDefault: ProductCardType = {
     id: null,
     name: 'Product default',
@@ -70,7 +74,39 @@ export const ProductCardUnknown: ProductCardType = {
     statusIcon: crossIcon,
 };
 
+// Item type
+
+export type ItemCheckoutType = {
+    id: number,
+    amount: number,
+}
+
+export type CustomerType = {
+    id: string;
+    email: string;
+};
+
+export type ItemType = {
+    id: number;
+    name: string;
+    price: number;
+};
+
+export type ItemPurchaseType = {
+    item: ItemType;
+    amount: number;
+};
+
+export type PaymentType = {
+    id: string;
+    is_checked: boolean;
+    checkout_date: NullableType<string>;
+    customer: CustomerType;
+    purchased_items: ItemPurchaseType[];
+};
+
 // Product
+
 export const pBanane: ProductType = {
     "name": "Banane",
     "price": 199
@@ -82,6 +118,7 @@ export const pPomme: ProductType = {
 };
 
 // Product Icon
+
 export const iBanane: ProductIconType = {
     name: "Banane",
     icon: pBanana,

@@ -1,9 +1,8 @@
 import { ReponseType } from '../types/TAPI';
-import { ProductSaveType, ProductType } from '../types/TItem';
-import { toast } from '../utils/log.util';
+import { PaymentType, ProductSaveType, ProductType } from '../types/TItem';
+import { API_IP, API_PORT } from '@env';
 
-export const apiUrl = `http://${process.env.API_IP}:${process.env.API_PORT}`;
-export const userId = `${process.env.USER_ID}`;
+const apiUrl = `http://${API_IP}:${API_PORT}`;
 
 export async function getAllProductsAPI(): Promise<ReponseType<ProductSaveType[]>> {
     try {
@@ -12,24 +11,23 @@ export async function getAllProductsAPI(): Promise<ReponseType<ProductSaveType[]
             throw new Error(`Response status: ${response.status}`);
         }
         const json: ReponseType<ProductSaveType[]> = await response.json();
-        toast(`Items fetched: ${json.data.length}`);
         return json;
     } catch (error) {
-        console.error('Error fetching items:', error);
+        console.error('Error getAllProductsAPI', error);
         throw error;
     }
 }
 
-export async function getProductsAPI(offset = 0, limit = 100): Promise<ReponseType<ProductSaveType[]>> {
+export async function getProductsAPI(): Promise<ReponseType<ProductSaveType[]>> {
     try {
-        const response = await fetch(`${apiUrl}/items/?offset=${offset}&limit=${limit}`);
+        const response = await fetch(`${apiUrl}/items/`);
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
         const json: ReponseType<ProductSaveType[]> = await response.json();
         return json;
     } catch (error) {
-        console.error('Error fetching items:', error);
+        console.error('Error getProductsAPI', error);
         throw error;
     }
 }
@@ -43,7 +41,7 @@ export async function getProductAPI(productId: number): Promise<ReponseType<Prod
         const json: ReponseType<ProductSaveType> = await response.json();
         return json;
     } catch (error) {
-        console.error(`Error fetching item with id ${productId}:`, error);
+        console.error(`Error getProductAPI [id=${productId}]:`, error);
         throw error;
     }
 }
@@ -61,7 +59,6 @@ export async function postProduct(product: ProductType): Promise<ReponseType<Pro
             throw new Error(`Response status: ${response.status}`);
         }
         const json: ReponseType<ProductSaveType> = await response.json();
-        toast('Product added successfully');
         return json;
     } catch (error) {
         console.error('Error postProduct', error);
@@ -80,7 +77,7 @@ export async function deleteProductAPI(productId: number): Promise<ReponseType<P
         const json: ReponseType<ProductSaveType> = await response.json();
         return json;
     } catch (error) {
-        console.error(`Error deleting item with id ${productId}:`, error);
+        console.error(`Error deleteProductAPI [id=${productId}]:`, error);
         throw error;
     }
 }
@@ -89,18 +86,29 @@ export async function deleteAllProductsAPI(): Promise<ReponseType<ProductSaveTyp
     try {
         const products = await getAllProductsAPI();
         if (!products || products.data.length === 0) {
-            toast('No items to delete');
             return;
         }
 
         for (const product of products.data) {
             await deleteProductAPI(product.id);
-            toast(`Deleted item with id ${product.id}`);
         }
-
-        toast('All items deleted successfully');
     } catch (error) {
-        console.error('Error deleting all items:', error);
+        console.error('Error deleteAllProductsAPI', error);
         throw error;
     }
 };
+
+export async function getAllPaymentsAPI(): Promise<ReponseType<PaymentType[]>> {
+    const url = `${apiUrl}/payments/all`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+        const json: ReponseType<PaymentType[]> = await response.json();
+        return json;
+    } catch (error) {
+        console.error('Error getAllPaymentsAPI', error);
+        throw error;
+    }
+}

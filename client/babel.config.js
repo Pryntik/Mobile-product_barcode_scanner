@@ -5,5 +5,9 @@ module.exports = {
     '@babel/plugin-syntax-flow',
     '@babel/plugin-transform-flow-strip-types',
     '@babel/plugin-transform-private-methods',
+    ['module:react-native-dotenv', {
+      'moduleName': '@env',
+      'path': '.env'
+    }]  
   ],
 };

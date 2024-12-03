@@ -1,35 +1,34 @@
 import emptyHistoryIcon from "../assets/img/history_empty.png";
 import ImageButton from "../components/ImageButton";
-import CardProduct from "../components/CardProduct";
+import CardPayment from "../components/CardPayment";
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
-import { ProductType } from "../types/TItem";
-import { getAllProductsAPI } from "../services/api";
+import { getAllPaymentsAPI } from "../services/api";
 import { historyStyle } from "../styles/History.style";
-import { getProductCard } from "../utils/item.util";
+import { PaymentType } from "../types/TItem";
 
 const History = () => {
-    const [items, setItems] = useState<ProductType[]>([]);
-    const [cardProducts, setCardProducts] = useState<ReactElement[]>([]);
+    const [payments, setPayments] = useState<PaymentType[]>([]);
+    const [historyIsEmpty, setHistoryIsEmpty] = useState(true);
 
-    const getCardProducts = () => {
-        return cardProducts.map(cardProduct => cardProduct);
+    const getCardPayments = () => {
+        return payments.map(payment => <CardPayment payment={payment}/>);
     }
 
     const historyViewMode = () => {
-        if (items.length > 0) {
-        return (
-            <View>
-                {getCardProducts()}
-            </View>
-        );
+        if (historyIsEmpty === false) {
+            return (
+                <View>
+                    {getCardPayments()}
+                </View>
+            );
         }
         return (
             <View style={historyStyle.empty_view}>
                 <ImageButton
                     src={emptyHistoryIcon}
-                    onClick={majAPI}
+                    onClick={updatePayments}
                     style={{image: historyStyle.empty_image}}
                     disableDefaultStyle/>
                 <Text style={historyStyle.empty_text}>Empty</Text>
@@ -37,21 +36,26 @@ const History = () => {
         );
     }
 
-    const majAPI = async () => {
-        const products = await getAllProductsAPI();
-        setItems(products.data);
-    }
+    const updatePayments = async () => {
+        try {
+            const paymentsApi = await getAllPaymentsAPI();
+            const updatedCardPayment = new Set<PaymentType>();
+    
+            for (const payment of paymentsApi.data) {
+                updatedCardPayment.add(payment);
+            }
 
-    useEffect(() => {
-        items.map(async (item, i) => {
-            const productCard = await getProductCard(item);
-            setCardProducts(prevCardProducts => [...prevCardProducts, <CardProduct key={i} product={productCard} />]);
-        });
-    }, [items]);
+            setPayments(Array.from(updatedCardPayment));
+            setHistoryIsEmpty(paymentsApi.data.length <= 0);
+        }
+        catch (error) {
+            console.error(error);
+        }
+    };
 
     useFocusEffect(
         useCallback(() => {
-            majAPI();
+            updatePayments();
         }, [])
     );
 

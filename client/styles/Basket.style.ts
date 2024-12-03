@@ -9,6 +9,23 @@ export const basketStyle = StyleSheet.create({
     scroll_view: {
         height: '100%',
     },
+    total_view: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: 50,
+        backgroundColor: 'white',
+        borderWidth: 1,
+        borderColor: '#f0f0f0',
+        position: 'absolute',
+        bottom: 0,
+        marginBottom: 100,
+    },
+    total_text: {
+        fontWeight: 'bold',
+    },
     buttons_view: {
         display: 'flex',
         flexDirection: 'row',
@@ -17,7 +34,7 @@ export const basketStyle = StyleSheet.create({
         width: '100%',
         height: 100,
         backgroundColor: 'white',
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: '#f0f0f0',
         position: 'absolute',
         bottom: 0,

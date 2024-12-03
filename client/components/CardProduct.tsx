@@ -8,7 +8,7 @@ import { cardStyle } from "../styles/Card.style";
 import { getProductIcon, getProductPriceFromQuantity, getProductQuantity, getProductSaveFromCard, parsePrice, parseQuantity } from "../utils/item.util";
 import { addInitialProductDB, deleteProductDB, updateProductDB } from "../services/db";
 
-type CardModeType = 'popup' | 'basket' | 'history';
+type CardModeType = 'popup' | 'basket';
 
 type CardProductType = {
     product: ProductCardType,
@@ -59,16 +59,16 @@ const CardProduct = ({
         return (
             <View style={[cardStyle.container, style]}>
                 <View style={cardStyle.data}>
-                    <View style={cardStyle.firstData}>
+                    <View style={cardStyle.firstData_product}>
                         <Image style={cardStyle.icon} source={getProductIcon(cardProduct)}/>
                         <Text style={cardStyle.title}>{cardProduct.name}</Text>
                     </View>
-                    <View style={cardStyle.otherData}>
-                        <View style={cardStyle.otherDataTop}>
+                    <View style={cardStyle.otherData_product}>
+                        <View style={cardStyle.otherDataTop_product}>
                             <Text style={cardStyle.content}>{parsePrice(cardProduct.price, '€')}</Text>
                             <Image style={cardStyle.status} source={cardProduct.statusIcon}/>
                         </View>
-                        <View style={cardStyle.otherDataBottom}>
+                        <View style={cardStyle.otherDataBottom_product}>
                             <ImageButton
                                 style={{image: cardStyle.buttonQuantity}}
                                 src={lessIcon}

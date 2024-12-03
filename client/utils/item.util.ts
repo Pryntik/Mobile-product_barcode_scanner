@@ -2,7 +2,7 @@ import checkIcon from "../assets/img/check.png";
 import unknownIcon from "../assets/img/unknown.png";
 import crossIcon from "../assets/img/cross.png";
 import pUnknown from "../assets/product/p_unknown.png";
-import { AllProductType, MaybeType, MaybeProductType, NullableType, ProductCardType, ProductExtendType, ProductSaveType, ProductType, ValidProducts, ProductCardUnknown } from "../types/TItem";
+import { AllProductType, MaybeType, MaybeProductType, NullableType, ProductCardType, ProductExtendType, ProductSaveType, ProductType, ValidProducts, ProductCardUnknown, ItemCheckoutType, ItemPurchaseType } from "../types/TItem";
 import { ImageSourcePropType } from "react-native";
 import { getAllProductsDB, getInitialProductDB } from "../services/db";
 
@@ -67,6 +67,25 @@ export async function getProductCardFromSave(product: ProductSaveType, priceIsLo
     };
 }
 
+export function getProductCheckoutFromSave(product: ProductSaveType): ItemCheckoutType {
+    return {
+        id: product.id,
+        amount: product.price / 100,
+    };
+}
+
+export function getItemPurchaseLength(items: ItemPurchaseType[]): number {
+    return items.reduce((total, item) => {
+        return item ? total + 1 : total;
+    }, 0);
+}
+
+export function getItemPurchaseAmount(items: ItemPurchaseType[]): number {
+    return items.reduce((total, item) => {
+        return total + item.amount;
+    }, 0);
+}
+
 /** Returns a product card object with default values if the product information is incomplete.
  *
  * @param {MaybeProductType} item - The item which may or may not be a complete product.
@@ -128,6 +147,12 @@ export async function getProductPriceFromQuantity(product: AllProductType, quant
         return initialProduct.price * quantity;
     }
     return 0;
+}
+
+export function getTotalPrice(products: AllProductType[]) {
+    return products.reduce((total, cardProduct) => {
+        return total + (cardProduct.price || 0);
+    }, 0);
 }
 
 export function getProductQuantity(product: AllProductType, quantityIsLock?: boolean): number {

@@ -86,7 +86,7 @@ const Popup = ({
     };
 
     const addManualProduct = async () => {
-        if (formName !== '' && formPrice !== 0) {
+        if (formName !== '' && formPrice >= 100) {
             const id = await getProductId();
             const productSave = await getProductSaveFromCard({
                 ...ProductCardDefault,
@@ -100,6 +100,7 @@ const Popup = ({
             await updateProductCard();
             closePopup();
         }
+        else if (formPrice < 100) toast('Price must be greater or equal than 100');
         else toast('Product not valid');
     };
 

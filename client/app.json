@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/img/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/img/splash.png",
       "resizeMode": "contain",
@@ -15,7 +16,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.univ.barcodescanner",
+      "package": "com.anonymous.barcodescannerclient",
       "adaptiveIcon": {
         "foregroundImage": "./assets/img/adaptive-icon.png",
         "backgroundColor": "#ffffff"

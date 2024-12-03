@@ -10,11 +10,12 @@ import { View, Text, ScrollView } from "react-native";
 import { ProductCardType } from "../types/TItem";
 import { basketStyle } from "../styles/Basket.style";
 import { getAllProductsDB } from "../services/db";
-import { getProductCard, isValidProductToSave } from "../utils/item.util";
+import { getProductCard, getTotalPrice, isValidProductToSave, parsePrice } from "../utils/item.util";
 import { useFocusEffect } from '@react-navigation/native';
 
 const Basket = () => {
     const [cardProducts, setCardProducts] = useState<ProductCardType[]>([]);
+    const [totalPrice, setTotalPrice] = useState(0);
     const [basketIsEmpty, setBasketIsEmpty] = useState(true);
     const [buttonEmptyBasketIsClick, setButtonEmptyBasketIsClick] = useState(false);
     const [buttonCheckoutIsClick, setButtonCheckoutIsClick] = useState(false);
@@ -61,6 +62,11 @@ const Basket = () => {
                     <ScrollView style={basketStyle.scroll_view}>
                         {getCardProducts()}
                     </ScrollView>
+                    <View style={basketStyle.total_view}>
+                        <Text style={basketStyle.total_text}>
+                            {`Total : ${parsePrice(totalPrice, '€')}`}
+                        </Text>
+                    </View>
                     <View style={basketStyle.buttons_view}>
                         <EmptyBasket
                             getClick={emptyButtonIsClick}
@@ -103,7 +109,8 @@ const Basket = () => {
             }
         };
         setCardProducts(Array.from(updatedCardProducts));
-        setBasketIsEmpty(products.length === 0);
+        setTotalPrice(getTotalPrice(products));
+        setBasketIsEmpty(products.length <= 0);
     };
 
     useFocusEffect(

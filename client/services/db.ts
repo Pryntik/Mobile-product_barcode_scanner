@@ -22,7 +22,7 @@ export const createTables = (): Promise<void> => {
             panier_db.execAsync(ProductsQuery);
             resolve();
         } catch (error) {
-            console.error(error);
+            console.error(`Error createTables`, error);
             reject(new Error('Failed to create tables'));
         }
     });
@@ -54,7 +54,7 @@ export const getProductDB = (id: number): Promise<NullableType<ProductSaveType>>
                 resolve(product);
             }
         } catch (error) {
-            console.error(`Error getProductDB with id ${id}:`, error);
+            console.error(`Error getProductDB [id=${id}]`, error);
             reject(error);
         }
     });
@@ -69,7 +69,7 @@ export const getInitialProductDB = (name: string): Promise<NullableType<ProductT
                 resolve(initialProduct);
             }
         } catch (error) {
-            console.error(`Error getInitialProductDB with name ${name}:`, error);
+            console.error(`Error getInitialProductDB [name=${name}]`, error);
             reject(error);
         }
     });
@@ -91,7 +91,7 @@ export const getAllProductsDB = (): Promise<ProductSaveType[]> => {
                 resolve([]);
             }
         } catch (error) {
-            console.error('Error getAllProductsDB:', error);
+            console.error('Error getAllProductsDB', error);
             reject(error);
         }
     });
@@ -113,7 +113,7 @@ export const getAllInitialProductsDB = (): Promise<ProductSaveType[]> => {
                 resolve([]);
             }
         } catch (error) {
-            console.error('Error getAllInitialProductsDB:', error);
+            console.error('Error getAllInitialProductsDB', error);
             reject(error);
         }
     });
@@ -148,7 +148,7 @@ export const addProductDB = (newProduct: ProductSaveType): Promise<void> => {
                 reject(new Error('Invalid product'));
             }
         } catch (error) {
-            console.error('Error addProductDB:', error);
+            console.error('Error addProductDB', error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -171,7 +171,7 @@ export const addInitialProductDB = (product: ProductType, transactionIsActive?: 
                 reject(new Error('Invalid initial product'));
             }
         } catch (error) {
-            console.error('Error addInitialProductDB:', error);
+            console.error('Error addInitialProductDB', error);
             !transactionIsActive && await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -199,7 +199,7 @@ export const updateProductDB = (updateProduct: ProductSaveType): Promise<void> =
                 reject(new Error('Invalid product'));
             }
         } catch (error) {
-            console.error('Error updateProductDB:', error);
+            console.error('Error updateProductDB', error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -215,7 +215,7 @@ export const deleteProductDB = (id: number): Promise<void> => {
             await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
-            console.error(`Error deleteProductDB with id ${id}:`, error);
+            console.error(`Error deleteProductDB [id=${id}]`, error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -231,7 +231,7 @@ export const deleteInitialProductDB = (name: string): Promise<void> => {
             await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
-            console.error(`Error deleteInitialProductDB with name ${name}:`, error);
+            console.error(`Error deleteInitialProductDB [name=${name}]`, error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -247,7 +247,7 @@ export const deleteAllProductsDB = (): Promise<void> => {
             await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
-            console.error('Error deleteAllProductsDB:', error);
+            console.error('Error deleteAllProductsDB', error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
@@ -263,7 +263,7 @@ export const deleteAllInitialProductsDB = (): Promise<void> => {
             await panier_db.runAsync('COMMIT;');
             resolve();
         } catch (error) {
-            console.error('Error deleteAllInitialProductsDB:', error);
+            console.error('Error deleteAllInitialProductsDB', error);
             await panier_db.runAsync('ROLLBACK;');
             reject(error);
         }
