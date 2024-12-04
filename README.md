@@ -2,8 +2,8 @@
 
 |   Nom         |  Prénom     |
 |---------------|-------------|
-|   Alexandre   |  Lemetteil  |
-|   Marvin      |  Clapson    |
+|   LEMETTEIL   |  Alexandre  |
+|   CLAPSON     |  Marvin     |
 
 Le TP est à réaliser par groupe de 2.
 
