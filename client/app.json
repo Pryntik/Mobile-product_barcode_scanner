@@ -7,19 +7,24 @@
     "icon": "./assets/img/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "94f0d011-1adf-4439-b1a3-3a6ff68d57fd"
+      }
+    },
     "splash": {
       "image": "./assets/img/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.anonymous.barcodescannerclient",
+      "package": "com.pryntik.barcodescannerclient",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/img/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/img/splash.png",
+        "backgroundColor": "#000000"
       }
     },
     "web": {

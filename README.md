@@ -7,6 +7,36 @@
 
 Le TP est à réaliser par groupe de 2.
 
+## Informations
+### Création et lancement
+Le projet a été créé l'aide de la commande suivante :
+```shell
+npx create-expo-app -t expo-template-blank-typescript
+```
+Il est possible de lancer l'application dans un émulateur Android et/ou iOS :
+```shell
+npx expo run:android  # npx expo run:ios
+```
+
+### Build
+Préparer le build
+```bash
+npx expo prebuild
+```
+Vérifier les libraries nécessaires (java et eas)
+```bash
+java -version
+npm install -g eas-cli
+```
+Build Local (Linux ou MacOS)
+```bash
+npx eas build --local
+```
+Build avec expo.dev
+```bash
+expo build:android
+```
+
 ## Compétences évaluées
 
 | Compétence | Aptitude | Description                                                                                        | Acquis | Remarque |
@@ -57,17 +87,3 @@ Le projet est composé des choses suivantes :
 Il est imposé d'utiliser `Expo.SQLite` pour la persistence des données au niveau du client.
 
 ***Il est important de configurer le serveur avant le client.***
-
-## Informations
-
-Le projet a été créé l'aide de la commande suivante :
-
-```shell
-npx create-expo-app -t expo-template-blank-typescript
-```
-
-Il est possible de lancer l'application dans un émulateur Android et/ou iOS :
-
-```shell
-npx expo run:android  # npx expo run:ios
-```

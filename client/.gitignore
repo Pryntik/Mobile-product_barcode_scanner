@@ -39,3 +39,6 @@ venv.bak/
 
 # typescript
 *.tsbuildinfo
+
+# Build
+android/
