@@ -1,4 +1,5 @@
 # Barcode Scanner
+<img width="960" height="540" alt="barecodes" src="https://github.com/user-attachments/assets/4a944e9f-7d5b-4503-94b2-b19e7511a4fa" />
 
 |   Nom         |  Prénom     |
 |---------------|-------------|
